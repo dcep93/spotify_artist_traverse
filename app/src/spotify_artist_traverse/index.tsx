@@ -7,6 +7,7 @@ const RESPONSE_TYPE = "token";
 
 export default function Main() {
   const [token, setToken] = useState("");
+  const [results, setResults] = useState("init");
 
   useEffect(() => {
     const hash = window.location.hash;
@@ -31,6 +32,21 @@ export default function Main() {
     window.localStorage.removeItem("token");
   };
 
+  if (token)
+    fetch(
+      `https://api.spotify.com/v1/search?${new URLSearchParams({
+        q: "taylor swift",
+        type: "artist",
+      })}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+      .then((resp) => resp.text())
+      .then(setResults);
+
   return (
     <div className="App">
       <header className="App-header">
@@ -44,6 +60,7 @@ export default function Main() {
         ) : (
           <button onClick={logout}>Logout</button>
         )}
+        <pre>{results}</pre>
       </header>
     </div>
   );
