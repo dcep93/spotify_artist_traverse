@@ -3,7 +3,7 @@ import GetToken from "./GetToken";
 
 export default function Main() {
   const { token, loginUrl, logout } = GetToken();
-  const [results, setResults] = useState("init");
+  const [state, updateState] = useState({ artists: {}, toTraverse: [] });
 
   if (token)
     fetch(

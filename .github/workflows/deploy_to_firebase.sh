@@ -4,6 +4,7 @@ set -euo pipefail
 
 SA_KEY="$1"
 
+# https://spotify-artist-traverse.web.app/
 # # # disable billing
 # nvm install 16.4.0 && \
 # firebase projects:addfirebase $GOOGLE_CLOUD_PROJECT && \
