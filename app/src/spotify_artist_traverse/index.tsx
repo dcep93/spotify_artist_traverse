@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 import GetToken from "./GetToken";
 import fetcher from "./fetcher";
+import oneHitWonder from "./oneHitWonder";
 
 type StateType = { status: string; artists: {} };
+const memo = {} as { [k: string]: boolean };
 
 export default function Main() {
   const { token, loginUrl, logout } = GetToken();
   const [state, update] = useState<StateType>({ status: "", artists: {} });
-
   useEffect(() => {
+    if (memo.main) return;
+    memo.main = true;
     token &&
       Promise.resolve()
         .then(() => update({ status: "fetching genres", artists: {} }))
@@ -20,7 +23,7 @@ export default function Main() {
                 status: `fetching seed artists from ${genres.length} genres`,
                 artists: {},
               });
-              return genres;
+              return genres.slice(0, 1); // TODO
             })
             .then((genres) =>
               genres.map((genre: string) =>
@@ -59,7 +62,15 @@ export default function Main() {
 }
 
 function receiveArtists(
-  artists: {}[],
+  artists: { id: string; name: string }[],
   state: StateType,
   update: (newState: StateType) => void
-) {}
+) {
+  oneHitWonder(artists[0].id).then(
+    (tracks) =>
+      update({
+        status: artists[0].name,
+        artists: { name: artists[0].name, tracks },
+      }) // TODO
+  );
+}
