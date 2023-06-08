@@ -1,36 +1,56 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import GetToken from "./GetToken";
+import fetcher from "./fetcher";
+
+type StateType = { generation: string; artists: {} };
 
 export default function Main() {
   const { token, loginUrl, logout } = GetToken();
-  const [state, updateState] = useState({ artists: {}, toTraverse: [] });
+  const [state, update] = useState<StateType>({ generation: "", artists: {} });
 
-  if (token)
-    fetch(
-      `https://api.spotify.com/v1/search?${new URLSearchParams({
-        q: "taylor swift",
-        type: "artist",
-      })}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    )
-      .then((resp) => resp.text())
-      .then(setResults);
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    token &&
+      (state.generation === ""
+        ? fetcher(token, "/recommendations/available-genre-seeds")
+            .then((resp) =>
+              resp.genres.map((genre: string) =>
+                fetcher(token, "/search", {
+                  q: encodeURI(genre),
+                  type: "artist",
+                  limit: "50",
+                }).then((json) =>
+                  json.artists.items.map((item: any) => ({
+                    id: item.id,
+                    name: item.name,
+                  }))
+                )
+              )
+            )
+            .then((ps) => Promise.all(ps))
+            .then((arrs) => arrs.flatMap((arr) => arr))
+            .then((artists) => receiveArtists(artists, state, update))
+        : null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, state.generation]);
+
+  if (!token)
+    return (
+      <div>
+        <a href={loginUrl}>login</a>
+      </div>
+    );
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Spotify React</h1>
-        {!token ? (
-          <a href={loginUrl}>Login to Spotify</a>
-        ) : (
-          <button onClick={logout}>Logout</button>
-        )}
-        <pre>{results}</pre>
-      </header>
+    <div>
+      <button onClick={logout}>logout</button>
+      <pre>{JSON.stringify(state, null, 2)}</pre>
     </div>
   );
 }
+
+function receiveArtists(
+  artists: {}[],
+  state: StateType,
+  update: (newState: StateType) => void
+) {}
