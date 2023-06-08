@@ -9,7 +9,7 @@ export enum TraverseState {
 
 export default function traverse(update: (state: string) => void) {
   const allArtists = {};
-  Promise.resolve()
+  return Promise.resolve()
     .then(() => update("fetching genres"))
     .then(() =>
       fetcher("/recommendations/available-genre-seeds")

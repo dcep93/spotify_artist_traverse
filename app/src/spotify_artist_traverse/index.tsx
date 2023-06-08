@@ -13,7 +13,7 @@ export default function Main() {
       return;
     }
     memo.main = true;
-    token && traverse(update);
+    token && traverse(update).then(console.log);
   }, [token]);
 
   if (!token)
