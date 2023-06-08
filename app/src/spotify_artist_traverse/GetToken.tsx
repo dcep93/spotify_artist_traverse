@@ -12,9 +12,6 @@ export function getStoredToken() {
   return JSON.parse(stored);
 }
 
-var partnerToken = // TODO
-  "BQDe2r6DOG5LzCX5lYVTle0AjkQd2cOPxswQmOIYU97nMOMv7prQV_8yGOM8jvl9KvHzTEUJxIlGS4OV8LFMYYcLbUHJzP2ah3I-c8vhl9BUcpLdJ2kp9sTP_xM7NFOvB1nmGgTArCk3TF_sXj9Iy3Yh3mpfeOEiDCcaqEKnCem8zWzBiMfHXH41Rtn_jhuut56fovwAFVmyLQF5M-Dbj7J2GK-doAAasTVryf6Ww-yv7WqVjFai6IfDQPcithA2Xq5NKpbVEa6LVGfIfHfVeT3LD8bQzysAGz_2gfDKN8TmP7wdbLgjGEztqywMkWmqyYepTwM3";
-
 export default function GetToken() {
   const [token, setToken] = useState(getStoredToken().token);
 
@@ -34,8 +31,7 @@ export default function GetToken() {
         STORAGE_KEY,
         JSON.stringify({
           token: storedToken,
-          partnerToken,
-          // partnerToken: prompt("enter your partner bearer token")!,
+          partnerToken: prompt("enter your partner bearer token")!,
         })
       );
       setToken(storedToken);
