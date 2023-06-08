@@ -13,7 +13,7 @@ export default function Main() {
       Promise.resolve()
         .then(() => update({ status: "fetching genres", artists: {} }))
         .then(() =>
-          fetcher(token, "/recommendations/available-genre-seeds")
+          fetcher("/recommendations/available-genre-seeds")
             .then((resp) => resp.genres || [])
             .then((genres) => {
               update({
@@ -24,7 +24,7 @@ export default function Main() {
             })
             .then((genres) =>
               genres.map((genre: string) =>
-                fetcher(token, "/search", {
+                fetcher("/search", {
                   q: encodeURI(genre),
                   type: "artist",
                   limit: "50",

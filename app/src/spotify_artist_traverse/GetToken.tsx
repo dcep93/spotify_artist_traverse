@@ -6,26 +6,29 @@ const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize";
 const RESPONSE_TYPE = "token";
 const STORAGE_KEY = `access_token-${CLIENT_ID}`;
 
+export function getStoredToken() {
+  return window.localStorage.getItem(STORAGE_KEY);
+}
+
 export default function GetToken() {
-  const [token, setToken] = useState("");
+  const [token, setToken] = useState(getStoredToken());
 
   useEffect(() => {
+    if (token) return;
     const hash = window.location.hash;
-    let token = window.localStorage.getItem(STORAGE_KEY);
 
-    if (!token && hash) {
-      token = hash
+    if (hash) {
+      window.location.hash = "";
+      const storedToken = hash
         .substring(1)
         .split("&")
         .find((elem) => elem.startsWith("access_token"))!
         .split("=")[1];
 
-      window.location.hash = "";
-      window.localStorage.setItem(STORAGE_KEY, token);
+      window.localStorage.setItem(STORAGE_KEY, storedToken);
+      setToken(storedToken);
     }
-
-    setToken(token!);
-  }, []);
+  }, [token]);
 
   return {
     token,
