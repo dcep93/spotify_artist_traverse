@@ -4,7 +4,6 @@ const MIN_TOP_PLAYS = 10000000;
 const MIN_RATIO = 10;
 
 export default function oneHitWonder(id: string) {
-  // TODO
   return fetcher(`https://api-partner.spotify.com/pathfinder/v1/query`, {
     operationName: `queryArtistOverview`,
     variables: `{"uri":"spotify:artist:${id}","locale":"","includePrerelease":false}`,
