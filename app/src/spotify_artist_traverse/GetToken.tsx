@@ -31,8 +31,8 @@ export default function GetToken() {
     token,
     loginUrl: `${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`,
     logout: () => {
+      window.localStorage.removeItem(STORAGE_KEY);
       setToken("");
-      window.localStorage.removeItem("token");
     },
   };
 }
