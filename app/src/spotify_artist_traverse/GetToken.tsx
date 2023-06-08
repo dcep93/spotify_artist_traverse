@@ -7,13 +7,13 @@ const RESPONSE_TYPE = "token";
 const STORAGE_KEY = `v2-access_token-${CLIENT_ID}`;
 
 export function getStoredToken() {
-  const stored = window.localStorage.getItem(STORAGE_KEY);
+  const stored = window.localStorage.getItem(STORAGE_KEY); // TODO refresh
   if (!stored) return {};
   return JSON.parse(stored);
 }
 
-var partnerToken =
-  "BQASAQncNx-9wPJr2KnVsm6p8weuCq3ChRvBpeuFDidiYAHHQpU8t67WJsrzp1CKpJfVdToQ9VhhT9uxAlOeE87dgqxMN9MmfpHMA5H5GCstygK2u1WNIB2fy6FsxokNbpTXuVLf1cHmBrfcZcQEy8DZXDVcvnZ9wa2mj6mxv8mu6yE-hw8Qd5Tz6AO7PLxnrlAESpT2qTTpPm-EwN28PQRI1TPEHrTKRk312e6iUrTi6IhwuPwnPmT9EAfjCuWpmNlblrGhbzbnNUVofHRuqdLVzmDjy6jsr8HOgEdY54jyfcVbpZeJA4xllrexdm-Hvyma4w2E";
+var partnerToken = // TODO
+  "BQDe2r6DOG5LzCX5lYVTle0AjkQd2cOPxswQmOIYU97nMOMv7prQV_8yGOM8jvl9KvHzTEUJxIlGS4OV8LFMYYcLbUHJzP2ah3I-c8vhl9BUcpLdJ2kp9sTP_xM7NFOvB1nmGgTArCk3TF_sXj9Iy3Yh3mpfeOEiDCcaqEKnCem8zWzBiMfHXH41Rtn_jhuut56fovwAFVmyLQF5M-Dbj7J2GK-doAAasTVryf6Ww-yv7WqVjFai6IfDQPcithA2Xq5NKpbVEa6LVGfIfHfVeT3LD8bQzysAGz_2gfDKN8TmP7wdbLgjGEztqywMkWmqyYepTwM3";
 
 export default function GetToken() {
   const [token, setToken] = useState(getStoredToken().token);

@@ -23,8 +23,9 @@ export default function Main() {
                 status: `fetching seed artists from ${genres.length} genres`,
                 artists: {},
               });
-              return genres.slice(0, 1); // TODO
+              return genres;
             })
+            .then((genres) => ["rock"]) // TODO
             .then((genres) =>
               genres.map((genre: string) =>
                 fetcher("/search", {

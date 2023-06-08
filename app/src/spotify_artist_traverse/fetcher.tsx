@@ -13,12 +13,6 @@ export default function fetcher(
   params: { [key: string]: string } = {}
 ) {
   path = `${path}?${new URLSearchParams(params)}`;
-  console.log(
-    params,
-    path.startsWith(
-      "https://api-partner.spotify.com/pathfinder/v1/query?operationName=queryArtistOverview&variables=%7B%22uri%22%3A%"
-    )
-  );
   return Promise.resolve().then(() =>
     path.startsWith("/")
       ? fetch(`https://api.spotify.com/v1${path}`, {
@@ -41,7 +35,8 @@ export default function fetcher(
               },
             },
             (response: any) => {
-              console.log(response, window.chrome.runtime.lastError);
+              if (window.chrome.runtime.lastError)
+                console.error(window.chrome.runtime.lastError);
               resolve(response);
             }
           )
