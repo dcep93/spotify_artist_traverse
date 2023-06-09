@@ -75,6 +75,7 @@ function receiveArtists(
     .join("\n");
   update(state);
   if (counts.map((count) => count.count).reduce((a, b) => a + b, 0) > 100)
+    // TODO
     return Promise.resolve();
   const f = oneHitWonder;
   return Promise.resolve()
