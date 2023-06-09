@@ -13,7 +13,8 @@ export default function Main() {
       return;
     }
     memo.main = true;
-    token && traverse(update).then(console.log);
+    token &&
+      traverse(update).then((allArtists) => console.log("wut", allArtists));
   }, [token]);
 
   if (!token)

@@ -14,7 +14,6 @@ export default function traverse(update: (state: string) => void) {
     .then(() =>
       fetcher("/recommendations/available-genre-seeds")
         .then((resp) => resp.genres || [])
-        .then((genres) => ["rock"]) // TODO
         .then((genres) => {
           update(`fetching seed artists from ${genres.length} genres`);
           return genres;
@@ -26,7 +25,7 @@ export default function traverse(update: (state: string) => void) {
               type: "artist",
               limit: "50",
             }).then((json) =>
-              json.artists.items.map((item: any) => ({
+              (json.artists || { items: [] }).items.map((item: any) => ({
                 id: item.id,
                 name: item.name,
               }))
