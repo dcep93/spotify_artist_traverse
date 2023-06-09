@@ -6,7 +6,7 @@ const memo = {} as { [k: string]: boolean };
 
 export default function Main() {
   const { token, loginUrl, logout } = GetToken();
-  const [state, update] = useState("");
+  const [state, update] = useState(""); // TODO
   useEffect(() => {
     if (memo.main) {
       console.log("bailing", Date.now());
