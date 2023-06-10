@@ -96,12 +96,7 @@ function receiveArtists(
       return artist;
     });
   if (artists.length === 0) return Promise.resolve();
-  const groups = updateWithAllArtists(update, allArtists);
-  if (
-    groups.map((group) => group.group.length).reduce((a, b) => a + b, 0) > 100
-  )
-    // TODO
-    return Promise.resolve();
+  updateWithAllArtists(update, allArtists);
   const f = oneHitWonder;
   return Promise.resolve()
     .then(() =>
