@@ -16,7 +16,7 @@ export default function oneHitWonder(id: string) {
           ? []
           : json.data.artistUnion.discography.topTracks.items
               .map((item: any) => ({
-                name: item.track.name,
+                track: item.track.name,
                 playcount: parseInt(item.track.playcount),
               }))
               .sort((a: any, b: any) => b.playcount - a.playcount)

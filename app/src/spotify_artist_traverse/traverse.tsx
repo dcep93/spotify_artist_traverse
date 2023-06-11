@@ -72,7 +72,12 @@ function receiveArtists(
         state: TraverseState.inFlight,
       })
   );
-  console.log("receiveArtists", JSON.stringify(allArtists).length, allArtists);
+  console.log(
+    "receiveArtists",
+    JSON.stringify(allArtists).length,
+    allArtists,
+    artists
+  );
   localStorage.setItem(STORAGE_KEY, JSON.stringify(allArtists));
   update({ allArtists });
   return Promise.resolve()
