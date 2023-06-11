@@ -35,7 +35,6 @@ export default function traverse(update: (state: StateType) => void) {
               type: "artist",
               limit: "50",
             }).then((json) =>
-              // (json.artists || { items: [] }).items.map((item: any) => ({
               json.artists.items.map((item: any) => ({
                 id: item.id,
                 name: item.name,
@@ -56,6 +55,7 @@ function receiveArtists(
   allArtists: AllArtistsType,
   update: (state: StateType) => void
 ): Promise<void> {
+  console.log("receiveArtists", JSON.stringify(allArtists).length); // TODO cache
   artists = artists
     .filter(({ id }) => allArtists[id] === undefined)
     .map((artist) => {

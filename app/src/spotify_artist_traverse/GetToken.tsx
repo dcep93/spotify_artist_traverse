@@ -31,7 +31,9 @@ export default function GetToken() {
         STORAGE_KEY,
         JSON.stringify({
           token: storedToken,
-          partnerToken: prompt("enter your partner bearer token")!,
+          partnerToken: prompt("enter your partner bearer token")!
+            .split(" ")
+            .pop(),
         })
       );
       setToken(storedToken);

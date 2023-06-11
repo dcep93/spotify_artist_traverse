@@ -8,10 +8,7 @@ export default function Main() {
   const { token, loginUrl, logout } = GetToken();
   const [state, update] = useState<StateType>({});
   useEffect(() => {
-    if (memo.main === token) {
-      console.log("bailing", Date.now());
-      return;
-    }
+    if (memo.main === token) return;
     memo.main = token;
     token && traverse(update).catch((err) => alert(err));
   }, [token]);
