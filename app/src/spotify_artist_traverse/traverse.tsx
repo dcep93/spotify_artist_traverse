@@ -1,4 +1,4 @@
-import fetcher from "./fetcher";
+import fetcher, { fetcherMemo } from "./fetcher";
 import oneHitWonder from "./oneHitWonder";
 
 export enum TraverseState {
@@ -11,13 +11,15 @@ type AllArtistsType = {
   [id: string]: { state: TraverseState; name: string; value?: any };
 };
 
+const f = oneHitWonder;
+
 export default function traverse(update: (state: string) => void) {
   const allArtists = {};
   return Promise.resolve()
     .then(() => update("fetching genres"))
     .then(() =>
       fetcher("/recommendations/available-genre-seeds")
-        .then((resp) => resp.genres || [])
+        .then((resp) => resp.genres)
         .then((genres) => {
           update(`fetching seed artists from ${genres.length} genres`);
           return genres;
@@ -29,7 +31,8 @@ export default function traverse(update: (state: string) => void) {
               type: "artist",
               limit: "50",
             }).then((json) =>
-              (json.artists || { items: [] }).items.map((item: any) => ({
+              // (json.artists || { items: [] }).items.map((item: any) => ({
+              json.artists.items.map((item: any) => ({
                 id: item.id,
                 name: item.name,
               }))
@@ -74,6 +77,7 @@ function updateWithAllArtists(
       )
     )
     .join("\n");
+  console.log(state);
   update(state);
   return groups;
 }
@@ -97,7 +101,6 @@ function receiveArtists(
     });
   if (artists.length === 0) return Promise.resolve();
   updateWithAllArtists(update, allArtists);
-  const f = oneHitWonder;
   return Promise.resolve()
     .then(() =>
       artists.map(({ id, name }) =>
@@ -125,6 +128,10 @@ function receiveArtists(
               .then((nextArtists) =>
                 receiveArtists(nextArtists, allArtists, update)
               )
+              .catch((e) => {
+                fetcherMemo.cancel = true;
+                throw e;
+              })
           )
       )
     )

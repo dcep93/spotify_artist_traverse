@@ -1,7 +1,7 @@
 import { getStoredToken } from "./GetToken";
 
 const extension_id = "kmpbdkipjlpbckfnpbfbncddjaneeklc";
-const MAX_RUNNERS = 1;
+const MAX_RUNNERS = 10;
 const SLEEP_MS = 100;
 
 declare global {
@@ -9,6 +9,8 @@ declare global {
     chrome: any;
   }
 }
+
+export const fetcherMemo: { [key: string]: any } = {};
 
 const queue: (() => void)[] = [];
 const in_use: undefined[] = [];
@@ -40,6 +42,7 @@ export default function fetcher(
 }
 
 function helper(path: string, params: { [key: string]: string }) {
+  if (fetcherMemo.cancel) return;
   path = `${path}?${new URLSearchParams(params)}`;
   return Promise.resolve().then(() =>
     path.startsWith("/")
@@ -63,9 +66,9 @@ function helper(path: string, params: { [key: string]: string }) {
               },
             },
             (response: any) => {
-              if (window.chrome.runtime.lastError)
-                console.error(window.chrome.runtime.lastError);
-              console.log(response);
+              if (window.chrome.runtime.lastError) {
+                throw new Error(window.chrome.runtime.lastError);
+              }
               resolve(response);
             }
           )

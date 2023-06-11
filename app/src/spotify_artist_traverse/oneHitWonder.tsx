@@ -11,7 +11,7 @@ export default function oneHitWonder(id: string) {
       '{"persistedQuery":{"version":1,"sha256Hash":"35648a112beb1794e39ab931365f6ae4a8d45e65396d641eeda94e4003d41497"}}',
   })
     .then((json) =>
-      json === undefined
+      json.data === undefined
         ? []
         : json.data.artistUnion.discography.topTracks.items
             .map((item: any) => ({
