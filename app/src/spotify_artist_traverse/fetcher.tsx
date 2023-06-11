@@ -50,7 +50,13 @@ function helper(path: string, params: { [key: string]: string }) {
           headers: {
             Authorization: `Bearer ${getStoredToken().token}`,
           },
-        }).then((resp) => resp.json())
+        }).then((resp) =>
+          resp.ok
+            ? resp.json()
+            : resp.text().then((text) => {
+                throw new Error(text);
+              })
+        )
       : new Promise((resolve) =>
           window.chrome.runtime.sendMessage(
             extension_id,
