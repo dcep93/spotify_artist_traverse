@@ -7,21 +7,25 @@ export enum TraverseState {
   hit,
 }
 
-type AllArtistsType = {
+export type AllArtistsType = {
   [id: string]: { state: TraverseState; name: string; value?: any };
 };
 
+export type StateType = { message?: string; allArtists?: AllArtistsType };
+
 const f = oneHitWonder;
 
-export default function traverse(update: (state: string) => void) {
+export default function traverse(update: (state: StateType) => void) {
   const allArtists = {};
   return Promise.resolve()
-    .then(() => update("fetching genres"))
+    .then(() => update({ message: "fetching genres" }))
     .then(() =>
       fetcher("/recommendations/available-genre-seeds")
         .then((resp) => resp.genres)
         .then((genres) => {
-          update(`fetching seed artists from ${genres.length} genres`);
+          update({
+            message: `fetching seed artists from ${genres.length} genres`,
+          });
           return genres;
         })
         .then((genres) =>
@@ -43,49 +47,14 @@ export default function traverse(update: (state: string) => void) {
         .then((arrs) => arrs.flatMap((arr) => arr))
         .then((artists) => receiveArtists(artists, allArtists, update))
     )
-    .then(() => update("done"))
+    .then(() => update({ message: "done", allArtists }))
     .then(() => allArtists);
-}
-
-function updateWithAllArtists(
-  update: (state: string) => void,
-  allArtists: AllArtistsType
-) {
-  const groups = Object.values(TraverseState)
-    .filter((traverseState) => Number.isInteger(traverseState))
-    .map((traverseState: any) => traverseState as TraverseState)
-    .map((traverseState: TraverseState) => ({
-      traverseState,
-      group: Object.values(allArtists).filter(
-        ({ state }) => state === traverseState
-      ),
-    }));
-  const state = groups
-    .map((c) => `${TraverseState[c.traverseState]}: ${c.group.length}`)
-    .concat(
-      JSON.stringify(
-        groups
-          .find((group) => group.traverseState === TraverseState.hit)!
-          .group.map((artist) => ({
-            artist: artist.name,
-            track: artist.value![0].name,
-            playcount: artist.value![0].playcount,
-          }))
-          .sort((a, b) => b.playcount - a.playcount),
-        null,
-        2
-      )
-    )
-    .join("\n");
-  console.log(state);
-  update(state);
-  return groups;
 }
 
 function receiveArtists(
   artists: { id: string; name: string }[],
   allArtists: AllArtistsType,
-  update: (state: string) => void
+  update: (state: StateType) => void
 ): Promise<void> {
   artists = artists
     .filter(({ id }) => allArtists[id] === undefined)
@@ -100,7 +69,7 @@ function receiveArtists(
       return artist;
     });
   if (artists.length === 0) return Promise.resolve();
-  updateWithAllArtists(update, allArtists);
+  update({ allArtists });
   return Promise.resolve()
     .then(() =>
       artists.map(({ id, name }) =>

@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
 import GetToken from "./GetToken";
-import traverse from "./traverse";
+import traverse, { AllArtistsType, StateType, TraverseState } from "./traverse";
 
-const memo = {} as { [k: string]: boolean };
+const memo = {} as { [k: string]: any };
 
 export default function Main() {
   const { token, loginUrl, logout } = GetToken();
-  const [state, update] = useState(""); // TODO
+  const [state, update] = useState<StateType>({});
   useEffect(() => {
-    if (memo.main) {
+    if (memo.main === token) {
       console.log("bailing", Date.now());
       return;
     }
-    memo.main = true;
-    token && traverse(update);
+    memo.main = token;
+    token && traverse(update).catch((err) => alert(err));
   }, [token]);
 
   if (!token)
@@ -26,7 +26,42 @@ export default function Main() {
   return (
     <div>
       <button onClick={logout}>logout</button>
-      <pre>{state}</pre>
+      <div>{state.message}</div>
+      {!state.allArtists ? null : results(state.allArtists)}
+    </div>
+  );
+}
+
+function results(allArtists: AllArtistsType) {
+  const groups = Object.values(TraverseState)
+    .filter((traverseState) => Number.isInteger(traverseState))
+    .map((traverseState: any) => traverseState as TraverseState)
+    .map((traverseState: TraverseState) => ({
+      traverseState,
+      group: Object.values(allArtists).filter(
+        ({ state }) => state === traverseState
+      ),
+    }));
+  const pre = JSON.stringify(
+    groups
+      .find((group) => group.traverseState === TraverseState.hit)!
+      .group.map((artist) => ({
+        artist: artist.name,
+        track: artist.value![0].name,
+        playcount: artist.value![0].playcount,
+      }))
+      .sort((a, b) => b.playcount - a.playcount),
+    null,
+    2
+  );
+  return (
+    <div>
+      {groups.map((group) => (
+        <div key={group.traverseState}>
+          {TraverseState[group.traverseState]}: {group.group.length}
+        </div>
+      ))}
+      <pre>{pre}</pre>
     </div>
   );
 }
