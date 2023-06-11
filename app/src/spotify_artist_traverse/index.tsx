@@ -42,12 +42,9 @@ function results(allArtists: AllArtistsType) {
   const pre = JSON.stringify(
     groups
       .find((group) => group.traverseState === TraverseState.hit)!
-      .group.map((artist) => ({
-        artist: artist.name,
-        track: artist.value![0].name,
-        playcount: artist.value![0].playcount,
-      }))
-      .sort((a, b) => b.playcount - a.playcount),
+      .group.map((entry) => entry.value)
+      .sort((a, b) => b.rank - a.rank)
+      .map((entry) => entry.value),
     null,
     2
   );

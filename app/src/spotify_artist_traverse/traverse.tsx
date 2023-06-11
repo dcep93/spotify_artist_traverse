@@ -1,6 +1,8 @@
 import fetcher, { fetcherMemo } from "./fetcher";
 import oneHitWonder from "./oneHitWonder";
 
+const STORAGE_KEY = `spotify_artist_traverse-traverse-v2`;
+
 export enum TraverseState {
   inFlight,
   miss,
@@ -8,7 +10,7 @@ export enum TraverseState {
 }
 
 export type AllArtistsType = {
-  [id: string]: { state: TraverseState; name: string; value?: any };
+  [id: string]: { state: TraverseState; value?: any };
 };
 
 export type StateType = { message?: string; allArtists?: AllArtistsType };
@@ -16,69 +18,71 @@ export type StateType = { message?: string; allArtists?: AllArtistsType };
 const f = oneHitWonder;
 
 export default function traverse(update: (state: StateType) => void) {
-  const allArtists = {};
-  return Promise.resolve()
-    .then(() => update({ message: "fetching genres" }))
-    .then(() =>
-      fetcher("/recommendations/available-genre-seeds")
-        .then((resp) => resp.genres)
-        .then((genres) => {
-          update({
-            message: `fetching seed artists from ${genres.length} genres`,
-          });
-          return genres;
-        })
-        .then((genres) =>
-          genres.map((genre: string) =>
-            fetcher("/search", {
-              q: encodeURI(genre),
-              type: "artist",
-              limit: "50",
-            }).then((json) =>
-              json.artists.items.map((item: any) => ({
-                id: item.id,
-                name: item.name,
-              }))
+  const cached = window.localStorage.getItem(STORAGE_KEY);
+  return (
+    cached
+      ? Promise.resolve()
+          .then(() => JSON.parse(cached))
+          .then((allArtists: AllArtistsType) =>
+            receiveArtists(
+              Object.entries(allArtists)
+                .filter(([id, entry]) => entry.state === TraverseState.inFlight)
+                .map(([id, entry]) => id),
+              allArtists,
+              update
             )
           )
-        )
-        .then((ps) => Promise.all(ps))
-        .then((arrs) => arrs.flatMap((arr) => arr))
-        .then((artists) => receiveArtists(artists, allArtists, update))
-    )
-    .then(() => update({ message: "done", allArtists }))
-    .then(() => allArtists);
+      : Promise.resolve()
+          .then(() => update({ message: "fetching genres" }))
+          .then(() =>
+            fetcher("/recommendations/available-genre-seeds")
+              .then((resp) => resp.genres)
+              .then((genres) => {
+                update({
+                  message: `fetching seed artists from ${genres.length} genres`,
+                });
+                return genres;
+              })
+              .then((genres) =>
+                genres.map((genre: string) =>
+                  fetcher("/search", {
+                    q: encodeURI(genre),
+                    type: "artist",
+                    limit: "50",
+                  }).then((json) =>
+                    json.artists.items.map((item: any) => item.id)
+                  )
+                )
+              )
+              .then((ps) => Promise.all(ps))
+              .then((arrs) => arrs.flatMap((arr) => arr))
+              .then((artists) => receiveArtists(artists, {}, update))
+          )
+  ).then((allArtists) => update({ message: "done", allArtists }));
 }
 
 function receiveArtists(
-  artists: { id: string; name: string }[],
+  artists: string[],
   allArtists: AllArtistsType,
   update: (state: StateType) => void
-): Promise<void> {
-  console.log("receiveArtists", JSON.stringify(allArtists).length); // TODO cache
-  artists = artists
-    .filter(({ id }) => allArtists[id] === undefined)
-    .map((artist) => {
-      Promise.resolve().then(
-        () =>
-          (allArtists[artist.id] = {
-            name: artist.name,
-            state: TraverseState.inFlight,
-          })
-      );
-      return artist;
-    });
-  if (artists.length === 0) return Promise.resolve();
+): Promise<AllArtistsType> {
+  artists.forEach(
+    (artist) =>
+      (allArtists[artist] = {
+        state: TraverseState.inFlight,
+      })
+  );
+  console.log("receiveArtists", JSON.stringify(allArtists).length, allArtists);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(allArtists));
   update({ allArtists });
   return Promise.resolve()
     .then(() =>
-      artists.map(({ id, name }) =>
+      artists.map((id) =>
         Promise.resolve()
           .then(() => f(id))
           .then(
             (value) =>
               (allArtists[id] = {
-                name,
                 state:
                   value === undefined ? TraverseState.miss : TraverseState.hit,
                 value,
@@ -87,12 +91,17 @@ function receiveArtists(
           .then(() =>
             fetcher(`/artists/${id}/related-artists`)
               .then((json) =>
-                json.artists.map(
-                  ({ id, name }: { id: string; name: string }) => ({
+                json.artists
+                  .map(({ id }: { id: string }) => ({
                     id,
-                    name,
+                  }))
+                  .filter((artist: { id: string }) => {
+                    if (allArtists[id] !== undefined) return false;
+                    allArtists[artist.id] = {
+                      state: TraverseState.inFlight,
+                    };
+                    return true;
                   })
-                )
               )
               .then((nextArtists) =>
                 receiveArtists(nextArtists, allArtists, update)
@@ -105,5 +114,5 @@ function receiveArtists(
       )
     )
     .then((ps) => Promise.all(ps))
-    .then(() => Promise.resolve());
+    .then(() => Promise.resolve(allArtists));
 }
