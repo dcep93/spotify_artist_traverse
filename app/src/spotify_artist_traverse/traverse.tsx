@@ -1,7 +1,7 @@
 import fetcher, { fetcherMemo } from "./fetcher";
 import oneHitWonder from "./oneHitWonder";
 
-const STORAGE_KEY = `spotify_artist_traverse-traverse-v2`;
+const STORAGE_KEY = `spotify_artist_traverse-traverse-v3`;
 
 export enum TraverseState {
   inFlight,

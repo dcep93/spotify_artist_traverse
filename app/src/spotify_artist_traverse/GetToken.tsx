@@ -4,7 +4,7 @@ const CLIENT_ID = "613898add293422983bbba619d9cc8fa";
 const REDIRECT_URI = window.location.href.replace(/(\?|#).*/, "");
 const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize";
 const RESPONSE_TYPE = "token";
-const STORAGE_KEY = `v2-access_token-${CLIENT_ID}`;
+const STORAGE_KEY = `spotify_artist_traverse-access_token-v1`;
 
 export function getStoredToken() {
   const stored = window.localStorage.getItem(STORAGE_KEY); // TODO refresh
