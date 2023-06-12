@@ -25,7 +25,7 @@ export default function GetToken() {
       window.localStorage.setItem(
         PARTNER_STORAGE_KEY,
         getStoredToken().partnerToken ||
-          prompt("enter your partner bearer token")!.split(" ").pop()!
+          prompt("enter your partner bearer token")!.split(" ").pop()! // TODO
       );
 
       window.location.hash = "";
