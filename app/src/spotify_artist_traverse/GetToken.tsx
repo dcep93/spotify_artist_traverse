@@ -27,13 +27,15 @@ export default function GetToken() {
         .find((elem) => elem.startsWith("access_token"))!
         .split("=")[1];
 
+      const partnerToken =
+        getStoredToken().partnerToken ||
+        prompt("enter your partner bearer token")!.split(" ").pop();
+
       window.localStorage.setItem(
         STORAGE_KEY,
         JSON.stringify({
           token: storedToken,
-          partnerToken: prompt("enter your partner bearer token")!
-            .split(" ")
-            .pop(),
+          partnerToken,
         })
       );
       setToken(storedToken);
