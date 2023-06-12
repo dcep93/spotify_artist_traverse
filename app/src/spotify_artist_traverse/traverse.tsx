@@ -22,7 +22,7 @@ export default function traverse(update: (state: StateType) => void) {
   return (
     cached
       ? Promise.resolve()
-          .then(() => JSON.parse(cached))
+          .then(() => JSON.parse(cached!))
           .then((allArtists: AllArtistsType) =>
             receiveArtists(
               Object.entries(allArtists)
@@ -72,12 +72,12 @@ function receiveArtists(
         state: TraverseState.inFlight,
       })
   );
-  console.log(
-    "receiveArtists",
-    JSON.stringify(allArtists).length,
-    allArtists,
-    artists
-  );
+  // console.log(
+  //   "receiveArtists",
+  //   JSON.stringify(allArtists).length,
+  //   artists,
+  //   allArtists
+  // );
   localStorage.setItem(STORAGE_KEY, JSON.stringify(allArtists));
   update({ allArtists });
   return Promise.resolve()
@@ -97,12 +97,10 @@ function receiveArtists(
             fetcher(`/artists/${id}/related-artists`)
               .then((json) =>
                 json.artists
-                  .map(({ id }: { id: string }) => ({
-                    id,
-                  }))
-                  .filter((artist: { id: string }) => {
+                  .map(({ id }: { id: string }) => id)
+                  .filter((id: string) => {
                     if (allArtists[id] !== undefined) return false;
-                    allArtists[artist.id] = {
+                    allArtists[id] = {
                       state: TraverseState.inFlight,
                     };
                     return true;
