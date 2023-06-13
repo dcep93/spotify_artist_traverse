@@ -66,7 +66,7 @@ function helper(
                   throw new Error(`fetch ${text}`);
                 })
           )
-        : new Promise((resolve) =>
+        : new Promise((resolve, reject) =>
             window.chrome.runtime.sendMessage(
               extension_id,
               {
@@ -82,11 +82,13 @@ function helper(
               },
               (response: any) => {
                 if (window.chrome.runtime.lastError) {
-                  throw new Error(
+                  reject(
                     `chrome.runtime.lastError ${window.chrome.runtime.lastError}`
                   );
                 }
-                if (!response.ok) throw new Error(`chrome: ${response.text}`);
+                if (!response.ok) {
+                  reject(`chrome: ${response.text}`);
+                }
                 resolve(response.msg);
               }
             )

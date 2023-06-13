@@ -10,7 +10,11 @@ export default function Main() {
   useEffect(() => {
     if (memo.main === token) return;
     memo.main = token;
-    token && traverse(update).catch((err) => alert(err));
+    token &&
+      traverse(update).catch((err) => {
+        console.error(err);
+        alert(err);
+      });
   }, [token]);
 
   if (!token)
