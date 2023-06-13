@@ -4,6 +4,8 @@ const extension_id = "kmpbdkipjlpbckfnpbfbncddjaneeklc";
 const MAX_RUNNERS = 10;
 const SLEEP_MS = 100;
 
+export const cancels: { [domain: string]: boolean } = {};
+
 declare global {
   interface Window {
     chrome: any;
@@ -31,50 +33,60 @@ function releaseRunner<T>(rval: T): T {
 }
 
 export default function fetcher(
+  domain: string,
   path: string,
   params: { [key: string]: string } = {}
 ) {
   return getRunner()
-    .then(() => helper(path, params))
+    .then(() => cancels[domain] || helper(domain, path, params))
     .then(releaseRunner);
 }
 
-function helper(path: string, params: { [key: string]: string }) {
+function helper(
+  domain: string,
+  path: string,
+  params: { [key: string]: string }
+) {
   path = `${path}?${new URLSearchParams(params)}`;
-  return Promise.resolve().then(() =>
-    path.startsWith("/")
-      ? fetch(`https://api.spotify.com/v1${path}`, {
-          headers: {
-            Authorization: `Bearer ${getStoredToken().token}`,
-          },
-        }).then((resp) =>
-          resp.ok
-            ? resp.json()
-            : resp.text().then((text) => {
-                throw new Error(text);
-              })
-        )
-      : new Promise((resolve) =>
-          window.chrome.runtime.sendMessage(
-            extension_id,
-            {
-              fetch: {
-                json: true,
-                url: path,
-                options: {
-                  headers: {
-                    Authorization: `Bearer ${getStoredToken().partnerToken}`,
+  return Promise.resolve()
+    .then(() =>
+      path.startsWith("/")
+        ? fetch(`https://api.spotify.com/v1${path}`, {
+            headers: {
+              Authorization: `Bearer ${getStoredToken().token}`,
+            },
+          }).then((resp) =>
+            resp.ok
+              ? resp.json()
+              : resp.text().then((text) => {
+                  throw new Error(text);
+                })
+          )
+        : new Promise((resolve) =>
+            window.chrome.runtime.sendMessage(
+              extension_id,
+              {
+                fetch: {
+                  json: true,
+                  url: path,
+                  options: {
+                    headers: {
+                      Authorization: `Bearer ${getStoredToken().partnerToken}`,
+                    },
                   },
                 },
               },
-            },
-            (response: any) => {
-              if (window.chrome.runtime.lastError) {
-                throw new Error(window.chrome.runtime.lastError);
+              (response: any) => {
+                if (window.chrome.runtime.lastError) {
+                  throw new Error(window.chrome.runtime.lastError);
+                }
+                resolve(response);
               }
-              resolve(response);
-            }
+            )
           )
-        )
-  );
+    )
+    .catch((err) => {
+      cancels[domain] = true;
+      throw err;
+    });
 }

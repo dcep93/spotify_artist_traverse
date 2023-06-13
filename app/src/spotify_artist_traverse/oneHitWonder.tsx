@@ -4,12 +4,16 @@ const MIN_TOP_PLAYS = 10000000;
 const MIN_RATIO = 10;
 
 export default function oneHitWonder(id: string) {
-  return fetcher(`https://api-partner.spotify.com/pathfinder/v1/query`, {
-    operationName: `queryArtistOverview`,
-    variables: `{"uri":"spotify:artist:${id}","locale":"","includePrerelease":false}`,
-    extensions:
-      '{"persistedQuery":{"version":1,"sha256Hash":"35648a112beb1794e39ab931365f6ae4a8d45e65396d641eeda94e4003d41497"}}',
-  }).then((json) =>
+  return fetcher(
+    "oneHitWonder",
+    `https://api-partner.spotify.com/pathfinder/v1/query`,
+    {
+      operationName: `queryArtistOverview`,
+      variables: `{"uri":"spotify:artist:${id}","locale":"","includePrerelease":false}`,
+      extensions:
+        '{"persistedQuery":{"version":1,"sha256Hash":"35648a112beb1794e39ab931365f6ae4a8d45e65396d641eeda94e4003d41497"}}',
+    }
+  ).then((json) =>
     Promise.resolve()
       .then(() =>
         json.data === undefined

@@ -35,7 +35,10 @@ export default function traverse(update: (state: StateType) => void) {
       : Promise.resolve()
           .then(() => update({ message: "fetching genres" }))
           .then(() =>
-            fetcher("/recommendations/available-genre-seeds")
+            fetcher(
+              "available-genre-seeds",
+              "/recommendations/available-genre-seeds"
+            )
               .then((resp) => resp.genres)
               .then((genres) => {
                 update({
@@ -45,7 +48,7 @@ export default function traverse(update: (state: StateType) => void) {
               })
               .then((genres) =>
                 genres.map((genre: string) =>
-                  fetcher("/search", {
+                  fetcher("genre-to-artists", "/search", {
                     q: encodeURI(genre),
                     type: "artist",
                     limit: "50",
@@ -94,7 +97,7 @@ function receiveArtists(
               })
           )
           .then(() =>
-            fetcher(`/artists/${id}/related-artists`)
+            fetcher("related-artists", `/artists/${id}/related-artists`)
               .then((json) =>
                 json.artists
                   .map(({ id }: { id: string }) => id)
