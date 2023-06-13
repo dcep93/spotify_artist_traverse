@@ -15,9 +15,6 @@ export default function oneHitWonder(id: string) {
     }
   ).then((json) =>
     Promise.resolve()
-      .then(() => {
-        if (json === undefined) throw new Error("partner cancelled");
-      })
       .then(() =>
         json.data === undefined
           ? []

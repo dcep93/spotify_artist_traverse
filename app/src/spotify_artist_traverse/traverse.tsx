@@ -100,10 +100,6 @@ function receiveArtists(
             fetcher("related-artists", `/artists/${id}/related-artists`).then(
               (json) =>
                 Promise.resolve()
-                  .then(() => {
-                    if (json === undefined)
-                      throw new Error("related-artists cancelled");
-                  })
                   .then(() =>
                     json.artists
                       .map(({ id }: { id: string }) => id)

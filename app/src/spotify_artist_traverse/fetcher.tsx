@@ -39,7 +39,7 @@ export default function fetcher(
 ) {
   return getRunner()
     .then(() => {
-      if (cancels[domain]) return undefined;
+      if (cancels[domain]) throw new Error(`cancelled ${domain}`);
       return helper(domain, path, params);
     })
     .then(releaseRunner);
@@ -89,7 +89,7 @@ function helper(
           )
     )
     .catch((err) => {
-      console.log("cancelling", domain);
+      console.log(`cancelling ${domain}`);
       cancels[domain] = true;
       throw err;
     });
