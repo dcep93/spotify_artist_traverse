@@ -10,8 +10,6 @@ declare global {
   }
 }
 
-export const fetcherMemo: { [key: string]: any } = {};
-
 const queue: (() => void)[] = [];
 const in_use: undefined[] = [];
 function getRunner() {
@@ -42,7 +40,6 @@ export default function fetcher(
 }
 
 function helper(path: string, params: { [key: string]: string }) {
-  if (fetcherMemo.cancel) return;
   path = `${path}?${new URLSearchParams(params)}`;
   return Promise.resolve().then(() =>
     path.startsWith("/")

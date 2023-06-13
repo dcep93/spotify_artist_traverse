@@ -1,4 +1,4 @@
-import fetcher, { fetcherMemo } from "./fetcher";
+import fetcher from "./fetcher";
 import oneHitWonder from "./oneHitWonder";
 
 const STORAGE_KEY = `spotify_artist_traverse-traverse-v3`;
@@ -109,10 +109,6 @@ function receiveArtists(
               .then((nextArtists) =>
                 receiveArtists(nextArtists, allArtists, update)
               )
-              .catch((e) => {
-                fetcherMemo.cancel = true;
-                throw e;
-              })
           )
       )
     )
