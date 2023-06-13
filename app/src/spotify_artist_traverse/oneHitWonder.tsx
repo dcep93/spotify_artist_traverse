@@ -16,14 +16,12 @@ export default function oneHitWonder(id: string) {
   ).then((json) =>
     Promise.resolve()
       .then(() =>
-        json.data === undefined
-          ? []
-          : json.data.artistUnion.discography.topTracks.items
-              .map((item: any) => ({
-                track: item.track.name,
-                playcount: parseInt(item.track.playcount),
-              }))
-              .sort((a: any, b: any) => b.playcount - a.playcount)
+        json.data.artistUnion.discography.topTracks.items
+          .map((item: any) => ({
+            track: item.track.name,
+            playcount: parseInt(item.track.playcount),
+          }))
+          .sort((a: any, b: any) => b.playcount - a.playcount)
       )
       .then((tracks) =>
         tracks.length >= 2 &&

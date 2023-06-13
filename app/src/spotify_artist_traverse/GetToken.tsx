@@ -22,11 +22,11 @@ export default function GetToken() {
     const hash = window.location.hash;
 
     if (hash) {
-      window.localStorage.setItem(
-        PARTNER_STORAGE_KEY,
-        getStoredToken().partnerToken ||
+      if (!getStoredToken().partnerToken)
+        window.localStorage.setItem(
+          PARTNER_STORAGE_KEY,
           prompt("enter your partner bearer token")!.split(" ").pop()! // TODO
-      );
+        );
 
       window.location.hash = "";
       const storedToken = hash

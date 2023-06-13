@@ -63,7 +63,7 @@ function helper(
             resp.ok
               ? resp.json()
               : resp.text().then((text) => {
-                  throw new Error(text);
+                  throw new Error(`fetch ${text}`);
                 })
           )
         : new Promise((resolve) =>
@@ -82,9 +82,12 @@ function helper(
               },
               (response: any) => {
                 if (window.chrome.runtime.lastError) {
-                  throw new Error(window.chrome.runtime.lastError);
+                  throw new Error(
+                    `chrome.runtime.lastError ${window.chrome.runtime.lastError}`
+                  );
                 }
-                resolve(response);
+                if (!response.ok) throw new Error(`chrome: ${response.text}`);
+                resolve(response.msg);
               }
             )
           )
