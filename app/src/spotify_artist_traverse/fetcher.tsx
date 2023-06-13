@@ -89,6 +89,7 @@ function helper(
           )
     )
     .catch((err) => {
+      console.log("cancelling", domain);
       cancels[domain] = true;
       throw err;
     });
