@@ -1,7 +1,7 @@
 import fetcher from "./fetcher";
 import oneHitWonder from "./oneHitWonder";
 
-const STORAGE_KEY = `spotify_artist_traverse-traverse-v3`;
+const STORAGE_KEY = `spotify_artist_traverse-traverse-v4`;
 
 export enum TraverseState {
   inFlight,
@@ -97,21 +97,28 @@ function receiveArtists(
               })
           )
           .then(() =>
-            fetcher("related-artists", `/artists/${id}/related-artists`)
-              .then((json) =>
-                json.artists
-                  .map(({ id }: { id: string }) => id)
-                  .filter((id: string) => {
-                    if (allArtists[id] !== undefined) return false;
-                    allArtists[id] = {
-                      state: TraverseState.inFlight,
-                    };
-                    return true;
+            fetcher("related-artists", `/artists/${id}/related-artists`).then(
+              (json) =>
+                Promise.resolve()
+                  .then(() => {
+                    if (json === undefined)
+                      throw new Error("related-artists cancelled");
                   })
-              )
-              .then((nextArtists) =>
-                receiveArtists(nextArtists, allArtists, update)
-              )
+                  .then(() =>
+                    json.artists
+                      .map(({ id }: { id: string }) => id)
+                      .filter((id: string) => {
+                        if (allArtists[id] !== undefined) return false;
+                        allArtists[id] = {
+                          state: TraverseState.inFlight,
+                        };
+                        return true;
+                      })
+                  )
+                  .then((nextArtists) =>
+                    receiveArtists(nextArtists, allArtists, update)
+                  )
+            )
           )
       )
     )

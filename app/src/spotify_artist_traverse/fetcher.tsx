@@ -38,7 +38,10 @@ export default function fetcher(
   params: { [key: string]: string } = {}
 ) {
   return getRunner()
-    .then(() => cancels[domain] || helper(domain, path, params))
+    .then(() => {
+      if (cancels[domain]) return undefined;
+      return helper(domain, path, params);
+    })
     .then(releaseRunner);
 }
 
