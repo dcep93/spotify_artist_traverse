@@ -23,8 +23,10 @@ export default function Main() {
   return (
     <div>
       <button onClick={logout}>logout</button>
-      <div>{state.message}</div>
-      {!state.allArtists ? null : results(state.allArtists)}
+      <div>
+        <div>{state.message}</div>
+        {!state.allArtists ? null : results(state.allArtists)}
+      </div>
     </div>
   );
 }
