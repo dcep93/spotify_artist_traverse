@@ -16,10 +16,11 @@ const queue: (() => void)[] = [];
 const in_use: undefined[] = [];
 function getRunner() {
   return new Promise<void>((resolve) => {
-    if (in_use.length < MAX_RUNNERS) {
-      in_use.push(undefined);
+    const length = in_use.push(undefined);
+    if (length <= MAX_RUNNERS) {
       resolve();
     } else {
+      in_use.pop();
       queue.push(resolve);
     }
   });
