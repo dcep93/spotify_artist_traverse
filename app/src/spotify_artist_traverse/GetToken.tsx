@@ -14,6 +14,13 @@ export function getStoredToken() {
   };
 }
 
+export function refreshPartnerToken() {
+  window.localStorage.setItem(
+    PARTNER_STORAGE_KEY,
+    prompt("enter your partner bearer token")!.split(" ").pop()! // TODO
+  );
+}
+
 export default function GetToken() {
   const [token, setToken] = useState(getStoredToken().token);
 
@@ -22,11 +29,7 @@ export default function GetToken() {
     const hash = window.location.hash;
 
     if (hash) {
-      if (!getStoredToken().partnerToken)
-        window.localStorage.setItem(
-          PARTNER_STORAGE_KEY,
-          prompt("enter your partner bearer token")!.split(" ").pop()! // TODO
-        );
+      if (!getStoredToken().partnerToken) refreshPartnerToken();
 
       window.location.hash = "";
       const storedToken = hash
