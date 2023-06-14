@@ -64,6 +64,7 @@ function results(allArtists: AllArtistsType) {
           {(group.group.length / numTotal).toFixed(4)}
         </div>
       ))}
+      <div>total: {numTotal}</div>
       <pre>{pre}</pre>
     </div>
   );
