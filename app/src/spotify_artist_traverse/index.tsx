@@ -55,11 +55,13 @@ function results(allArtists: AllArtistsType) {
     null,
     2
   );
+  const numTotal = Object.keys(allArtists).length;
   return (
     <div>
       {groups.map((group) => (
         <div key={group.traverseState}>
-          {TraverseState[group.traverseState]}: {group.group.length}
+          {TraverseState[group.traverseState]}: {group.group.length}{" "}
+          {(group.group.length / numTotal).toFixed(4)}
         </div>
       ))}
       <pre>{pre}</pre>
