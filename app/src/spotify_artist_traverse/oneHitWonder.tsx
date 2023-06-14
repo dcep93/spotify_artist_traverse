@@ -13,7 +13,7 @@ export default function oneHitWonder(id: string) {
       extensions:
         '{"persistedQuery":{"version":1,"sha256Hash":"35648a112beb1794e39ab931365f6ae4a8d45e65396d641eeda94e4003d41497"}}',
     }
-  ).then((json: any) =>
+  ).then((json) =>
     Promise.resolve()
       .then(() =>
         json.data.artistUnion.discography.topTracks.items

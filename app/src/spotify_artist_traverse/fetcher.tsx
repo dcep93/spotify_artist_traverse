@@ -36,7 +36,7 @@ export default function fetcher(
   domain: string,
   path: string,
   params: { [key: string]: string } = {}
-) {
+): Promise<any> {
   return Promise.resolve()
     .then(getRunner)
     .then(() => {
