@@ -26,11 +26,10 @@ function getRunner() {
   });
 }
 
-function releaseRunner<T>(rval: T): T {
+function releaseRunner() {
   in_use.pop();
   const n = queue.shift();
   if (n) setTimeout(n, SLEEP_MS);
-  return rval;
 }
 
 export default function fetcher(
@@ -38,12 +37,13 @@ export default function fetcher(
   path: string,
   params: { [key: string]: string } = {}
 ) {
-  return getRunner()
+  return Promise.resolve()
+    .then(getRunner)
     .then(() => {
       if (cancels[domain]) throw new Error(`cancelled ${domain}`);
       return helper(domain, path, params);
     })
-    .then(releaseRunner);
+    .finally(releaseRunner);
 }
 
 function helper(
