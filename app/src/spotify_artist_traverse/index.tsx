@@ -61,7 +61,7 @@ function results(allArtists: AllArtistsType) {
       {groups.map((group) => (
         <div key={group.traverseState}>
           {TraverseState[group.traverseState]}: {group.group.length}{" "}
-          {(group.group.length / numTotal).toFixed(4)}
+          {Math.floor((100 * group.group.length) / numTotal)}%
         </div>
       ))}
       <div>total: {numTotal}</div>
