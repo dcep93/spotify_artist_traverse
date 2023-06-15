@@ -17,6 +17,7 @@ const in_use: undefined[] = [];
 function getRunner() {
   return new Promise<void>((resolve) => {
     const length = in_use.push(undefined);
+    console.log("get", length);
     if (length <= MAX_RUNNERS) {
       resolve();
     } else {
@@ -28,6 +29,7 @@ function getRunner() {
 
 function releaseRunner() {
   in_use.pop();
+  console.log("release", in_use.length);
   const n = queue.pop();
   if (n) setTimeout(n, SLEEP_MS);
 }
