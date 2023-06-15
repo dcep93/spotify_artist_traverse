@@ -1,7 +1,7 @@
 import { getStoredToken } from "./GetToken";
 
 const extension_id = "kmpbdkipjlpbckfnpbfbncddjaneeklc";
-const MAX_RUNNERS = 10;
+const MAX_RUNNERS = 2;
 const SLEEP_MS = 100;
 
 export const cancels: { [domain: string]: boolean } = {};
