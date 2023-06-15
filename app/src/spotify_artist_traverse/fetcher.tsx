@@ -29,7 +29,7 @@ function getRunner() {
 
 function releaseRunner() {
   in_use.pop();
-  console.log("release", in_use.length);
+  console.log("release", in_use.length, cancels);
   const n = queue.pop();
   if (n) setTimeout(n, SLEEP_MS);
 }
@@ -43,6 +43,7 @@ export default function fetcher(
     .then(getRunner)
     .then(() => {
       if (cancels[domain]) throw new Error(`cancelled ${domain}`);
+      console.log("fetching", domain);
       return helper(domain, path, params);
     })
     .finally(releaseRunner);
