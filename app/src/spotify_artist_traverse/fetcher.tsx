@@ -4,7 +4,7 @@ const extension_id = "kmpbdkipjlpbckfnpbfbncddjaneeklc";
 const MAX_RUNNERS = 2;
 const SLEEP_MS = 100;
 
-export const cancels: { [domain: string]: boolean } = {};
+export const cancelled: { cancelled?: boolean } = {};
 
 declare global {
   interface Window {
@@ -29,7 +29,7 @@ function getRunner() {
 
 function releaseRunner() {
   in_use.pop();
-  console.log("release", Date.now() - start);
+  if (!cancelled.cancelled) console.log("release", Date.now() - start);
   const n = queue.pop();
   if (n) setTimeout(n, SLEEP_MS);
 }
@@ -43,7 +43,7 @@ export default function fetcher(
   return Promise.resolve()
     .then(getRunner)
     .then(() => {
-      if (cancels[domain]) throw new Error(`cancelled ${domain}`);
+      if (cancelled.cancelled) throw new Error(`cancelled ${domain}`);
       console.log("fetching", Date.now() - start, domain);
       return helper(domain, path, params);
     })
@@ -100,7 +100,7 @@ function helper(
     )
     .catch((err) => {
       console.log(`cancelling ${domain}`);
-      cancels[domain] = true;
+      cancelled.cancelled = true;
       throw err;
     });
 }
