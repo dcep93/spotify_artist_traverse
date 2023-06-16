@@ -1,6 +1,6 @@
 import { tokens } from "./GetToken";
 import oneHitWonder from "./oneHitWonder";
-import runner, { jsonOrThrow } from "./runner";
+import runner, { fetchExt, jsonOrThrow } from "./runner";
 
 const STORAGE_KEY = `spotify_artist_traverse-traverse-v4`;
 
@@ -96,30 +96,40 @@ function receiveArtists(
   return Promise.resolve()
     .then(() =>
       artists.map((id) =>
-        Promise.resolve()
-          .then(() => f(id))
-          .then(
-            (value) =>
-              (allArtists[id] = {
-                state:
-                  value === undefined ? TraverseState.miss : TraverseState.hit,
-                value,
-              })
-          )
-          .then(() =>
-            runner(() =>
-              fetch(
-                `https://api.spotify.com/v1/artists/${id}/related-artists`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${tokens.access}`,
-                  },
-                }
-              ).then(jsonOrThrow)
-            ).then((json) =>
+        runner(() =>
+          fetchExt({
+            url: `https://api-partner.spotify.com/pathfinder/v1/query?${new URLSearchParams(
+              {
+                operationName: `queryArtistOverview`,
+                variables: `{"uri":"spotify:artist:${id}","locale":"","includePrerelease":false}`,
+                extensions:
+                  '{"persistedQuery":{"version":1,"sha256Hash":"35648a112beb1794e39ab931365f6ae4a8d45e65396d641eeda94e4003d41497"}}',
+              }
+            )}`,
+            options: {
+              headers: {
+                Authorization: `Bearer ${tokens.partner}`,
+              },
+            },
+            json: true,
+          })
+        ).then((json) =>
+          Promise.resolve()
+            .then(() => f(json))
+            .then(
+              (value) =>
+                (allArtists[id] = {
+                  state:
+                    value === undefined
+                      ? TraverseState.miss
+                      : TraverseState.hit,
+                  value,
+                })
+            )
+            .then(() =>
               Promise.resolve()
                 .then(() =>
-                  json.artists
+                  json.data.artistUnion.relatedContent.relatedArtists.items
                     .map(({ id }: { id: string }) => id)
                     .filter((id: string) => {
                       if (allArtists[id] !== undefined) return false;
@@ -133,7 +143,7 @@ function receiveArtists(
                   receiveArtists(nextArtists, allArtists, update)
                 )
             )
-          )
+        )
       )
     )
     .then((ps) => Promise.all(ps))
