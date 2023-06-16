@@ -1,6 +1,6 @@
 import { tokens } from "./GetToken";
 import oneHitWonder from "./oneHitWonder";
-import runner, { fetchExt, jsonOrThrow, storageExt } from "./runner";
+import runner, { fetchExt, jsonOrThrow, log, storageExt } from "./runner";
 
 const STORAGE_KEY = `spotify_artist_traverse-traverse-v4`;
 
@@ -144,6 +144,9 @@ function receiveArtists(
                       return true;
                     })
                 )
+                .catch((err) => {
+                  throw new Error(log(err));
+                })
                 .then((nextArtists) =>
                   receiveArtists(nextArtists, allArtists, update)
                 )
