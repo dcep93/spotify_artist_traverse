@@ -7,6 +7,8 @@ const REFRESH_STORAGE_KEY = `spotify_artist_traverse-access_token-refresh-v1`;
 const BEARER =
   "NjEzODk4YWRkMjkzNDIyOTgzYmJiYTYxOWQ5Y2M4ZmE6Mjg5OWMyMzg1NGE0NGRhNjkwNDM2Y2QzYTg1YzgzNzA=";
 
+const REFRESH_PARTNER_TOKEN_MS = 60 * 1000;
+
 export const tokens = {
   refresh: window.localStorage.getItem(REFRESH_STORAGE_KEY),
   partner: "",
@@ -51,48 +53,31 @@ export default function GetToken() {
           window.location.href = "/";
         });
     } else if (tokens.refresh !== null) {
-      Promise.resolve()
-        .then(() => [
-          fetch(
-            `https://accounts.spotify.com/api/token?${new URLSearchParams({
-              grant_type: "refresh_token",
-              refresh_token: tokens.refresh!,
-            })}`,
-            {
-              headers: {
-                "content-type": "application/x-www-form-urlencoded",
-                Authorization: `Basic ${BEARER}`,
-              },
-              method: "POST",
-            }
-          )
-            .then((resp) =>
-              resp.ok
-                ? resp.json()
-                : resp.text().then((text) => {
-                    window.localStorage.removeItem(REFRESH_STORAGE_KEY);
-                    throw new Error(text);
-                  })
-            )
-            .then((json) => {
-              tokens.access = json.access_token;
-            }),
-          fetchExt("https://open.spotify.com", false, {})
-            .then((text: any) => text as string)
-            .then((text: string) =>
-              Promise.resolve()
-                .then(() => text.match(/"accessToken":"(.*?)"/))
-                .then((match) => match && match[1])
-                .then((partnerToken) => {
-                  if (!partnerToken) {
-                    console.log(text);
-                    throw new Error("no partner token");
-                  }
-                  tokens.partner = partnerToken;
-                })
-            ),
-        ])
-        .then((ps) => Promise.all(ps))
+      fetch(
+        `https://accounts.spotify.com/api/token?${new URLSearchParams({
+          grant_type: "refresh_token",
+          refresh_token: tokens.refresh!,
+        })}`,
+        {
+          headers: {
+            "content-type": "application/x-www-form-urlencoded",
+            Authorization: `Basic ${BEARER}`,
+          },
+          method: "POST",
+        }
+      )
+        .then((resp) =>
+          resp.ok
+            ? resp.json()
+            : resp.text().then((text) => {
+                window.localStorage.removeItem(REFRESH_STORAGE_KEY);
+                throw new Error(text);
+              })
+        )
+        .then((json) => {
+          tokens.access = json.access_token;
+        })
+        .then(refreshPartnerToken)
         .then(() => {
           console.log(tokens);
           setToken(true);
@@ -108,4 +93,25 @@ export default function GetToken() {
       setToken(false);
     },
   };
+}
+
+function refreshPartnerToken() {
+  return fetchExt("https://open.spotify.com", false, {})
+    .then((text: any) => text as string)
+    .then((text: string) =>
+      Promise.resolve()
+        .then(() => text.match(/"accessToken":"(.*?)"/))
+        .then((match) => match && match[1])
+        .then((partnerToken) => {
+          if (!partnerToken) {
+            console.log(text);
+            throw new Error("no partner token");
+          }
+          tokens.partner = partnerToken;
+        })
+    )
+    .then(() => {
+      console.log(tokens);
+      setTimeout(refreshPartnerToken, REFRESH_PARTNER_TOKEN_MS);
+    });
 }
