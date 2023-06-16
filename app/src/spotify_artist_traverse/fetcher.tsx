@@ -65,37 +65,43 @@ function helper(
                   throw new Error(`fetch ${text}`);
                 })
           )
-        : new Promise((resolve, reject) =>
-            window.chrome.runtime.sendMessage(
-              extension_id,
-              {
-                fetch: {
-                  json: true,
-                  url: path,
-                  options: {
-                    headers: {
-                      Authorization: `Bearer ${tokens.partner}`,
-                    },
-                  },
-                },
-              },
-              (response: any) => {
-                if (window.chrome.runtime.lastError) {
-                  reject(
-                    `chrome.runtime.lastError ${window.chrome.runtime.lastError}`
-                  );
-                }
-                if (!response.ok) {
-                  reject(`chrome: ${response.text}`);
-                }
-                resolve(response.msg);
-              }
-            )
-          )
+        : fetchExt(path, true, {
+            Authorization: `Bearer ${tokens.partner}`,
+          })
     )
     .catch((err) => {
       console.log(`cancelling ${domain}`);
       cancelled.cancelled = true;
       throw err;
     });
+}
+
+export function fetchExt(
+  url: string,
+  json: boolean,
+  headers: { [k: string]: string }
+) {
+  return new Promise((resolve, reject) =>
+    window.chrome.runtime.sendMessage(
+      extension_id,
+      {
+        fetch: {
+          json,
+          url,
+          options: {
+            headers,
+          },
+        },
+      },
+      (response: any) => {
+        if (window.chrome.runtime.lastError) {
+          reject(`chrome.runtime.lastError ${window.chrome.runtime.lastError}`);
+        }
+        if (!response.ok) {
+          reject(`chrome: ${response.text}`);
+        }
+        resolve(response.msg);
+      }
+    )
+  );
 }

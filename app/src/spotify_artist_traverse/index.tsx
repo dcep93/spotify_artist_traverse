@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import GetToken, { refreshPartnerToken } from "./GetToken";
+import GetToken from "./GetToken";
 import traverse, { AllArtistsType, StateType, TraverseState } from "./traverse";
 
 const memo = {} as { [k: string]: any };
@@ -29,7 +29,6 @@ export default function Main() {
   return (
     <div>
       <button onClick={logout}>logout</button>
-      <button onClick={refreshPartnerToken}>refreshPartnerToken</button>
       <div>
         <div>{state.message}</div>
         {!state.allArtists ? null : results(state.allArtists)}

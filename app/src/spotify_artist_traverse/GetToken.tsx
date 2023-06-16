@@ -1,24 +1,17 @@
 import { useEffect, useState } from "react";
+import { fetchExt } from "./fetcher";
 
 const CLIENT_ID = "613898add293422983bbba619d9cc8fa";
 const REDIRECT_URI = window.location.href.replace(/(\?|#).*/, "");
 const REFRESH_STORAGE_KEY = `spotify_artist_traverse-access_token-refresh-v8  `;
-const PARTNER_STORAGE_KEY = `spotify_artist_traverse-access_token-partner-v1`;
 const BEARER =
   "NjEzODk4YWRkMjkzNDIyOTgzYmJiYTYxOWQ5Y2M4ZmE6Mjg5OWMyMzg1NGE0NGRhNjkwNDM2Y2QzYTg1YzgzNzA=";
 
 export const tokens = {
   refresh: window.localStorage.getItem(REFRESH_STORAGE_KEY),
-  partner: window.localStorage.getItem(PARTNER_STORAGE_KEY),
+  partner: "",
   access: "",
 };
-
-export function refreshPartnerToken() {
-  window.localStorage.setItem(
-    PARTNER_STORAGE_KEY,
-    prompt("enter your partner bearer token")!.split(" ").pop()! // TODO
-  );
-}
 
 const memo = {} as { [k: string]: any };
 
@@ -30,7 +23,6 @@ export default function GetToken() {
     if (memo.GetToken) return;
     memo.GetToken = true;
     if (code) {
-      if (!tokens.partner) refreshPartnerToken();
       fetch(
         `https://accounts.spotify.com/api/token?${Object.entries({
           grant_type: "authorization_code",
@@ -59,30 +51,50 @@ export default function GetToken() {
           window.location.href = "/";
         });
     } else if (tokens.refresh !== null) {
-      fetch(
-        `https://accounts.spotify.com/api/token?${Object.entries({
-          grant_type: "refresh_token",
-          refresh_token: tokens.refresh,
-        })
-          .map(([key, value]) => `${key}=${encodeURIComponent(value!)}`)
-          .join("&")}`,
-        {
-          headers: {
-            "content-type": "application/x-www-form-urlencoded",
-            Authorization: `Basic ${BEARER}`,
-          },
-          method: "POST",
-        }
-      )
-        .then((resp) =>
-          resp.ok
-            ? resp.json()
-            : resp.text().then((text) => {
-                throw new Error(text);
-              })
-        )
-        .then((json) => {
-          tokens.access = json.access_token;
+      Promise.resolve()
+        .then(() => [
+          fetch(
+            `https://accounts.spotify.com/api/token?${Object.entries({
+              grant_type: "refresh_token",
+              refresh_token: tokens.refresh,
+            })
+              .map(([key, value]) => `${key}=${encodeURIComponent(value!)}`)
+              .join("&")}`,
+            {
+              headers: {
+                "content-type": "application/x-www-form-urlencoded",
+                Authorization: `Basic ${BEARER}`,
+              },
+              method: "POST",
+            }
+          )
+            .then((resp) =>
+              resp.ok
+                ? resp.json()
+                : resp.text().then((text) => {
+                    throw new Error(text);
+                  })
+            )
+            .then((json) => {
+              tokens.access = json.access_token;
+            }),
+          fetchExt("https://open.spotify.com", false, {})
+            .then((text: any) => text as string)
+            .then((text: string) =>
+              Promise.resolve()
+                .then(() => text.match(/"accessToken":"(.*?)"/))
+                .then((match) => match && match[1])
+                .then((partnerToken) => {
+                  if (!partnerToken) {
+                    console.log(text);
+                    throw new Error("no partner token");
+                  }
+                  tokens.partner = partnerToken;
+                })
+            ),
+        ])
+        .then((ps) => Promise.all(ps))
+        .then(() => {
           console.log(tokens);
           setToken(true);
         });
