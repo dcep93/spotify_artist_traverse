@@ -91,3 +91,8 @@ export function storageExt(storage: any): Promise<any> {
     )
   );
 }
+
+export function log<T>(t: T): T {
+  console.log(t);
+  return t;
+}

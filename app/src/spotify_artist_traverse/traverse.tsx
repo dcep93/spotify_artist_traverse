@@ -18,11 +18,6 @@ export type StateType = { message?: string; allArtists?: AllArtistsType };
 
 const f = oneHitWonder;
 
-function log<T>(t: T): T {
-  console.log(t);
-  return t;
-}
-
 export default function traverse(update: (state: StateType) => void) {
   return storageExt({
     action: "get",
