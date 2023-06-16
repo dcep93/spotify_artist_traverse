@@ -1,5 +1,6 @@
-import fetcher from "./fetcher";
+import { tokens } from "./GetToken";
 import oneHitWonder from "./oneHitWonder";
+import runner, { jsonOrThrow } from "./runner";
 
 const STORAGE_KEY = `spotify_artist_traverse-traverse-v4`;
 
@@ -35,9 +36,15 @@ export default function traverse(update: (state: StateType) => void) {
       : Promise.resolve()
           .then(() => update({ message: "fetching genres" }))
           .then(() =>
-            fetcher(
-              "available-genre-seeds",
-              "/recommendations/available-genre-seeds"
+            runner(() =>
+              fetch(
+                "https://api.spotify.com/v1/recommendations/available-genre-seeds",
+                {
+                  headers: {
+                    Authorization: `Bearer ${tokens.access}`,
+                  },
+                }
+              ).then(jsonOrThrow)
             )
               .then((resp) => resp.genres)
               .then((genres) => {
@@ -48,11 +55,20 @@ export default function traverse(update: (state: StateType) => void) {
               })
               .then((genres) =>
                 genres.map((genre: string) =>
-                  fetcher("genre-to-artists", "/search", {
-                    q: encodeURI(genre),
-                    type: "artist",
-                    limit: "50",
-                  }).then((json) =>
+                  runner(() =>
+                    fetch(
+                      `https://api.spotify.com/v1/search?${new URLSearchParams({
+                        q: encodeURI(genre),
+                        type: "artist",
+                        limit: "50",
+                      })}`,
+                      {
+                        headers: {
+                          Authorization: `Bearer ${tokens.access}`,
+                        },
+                      }
+                    ).then(jsonOrThrow)
+                  ).then((json) =>
                     json.artists.items.map((item: any) => item.id)
                   )
                 )
@@ -91,23 +107,31 @@ function receiveArtists(
               })
           )
           .then(() =>
-            fetcher("related-artists", `/artists/${id}/related-artists`).then(
-              (json) =>
-                Promise.resolve()
-                  .then(() =>
-                    json.artists
-                      .map(({ id }: { id: string }) => id)
-                      .filter((id: string) => {
-                        if (allArtists[id] !== undefined) return false;
-                        allArtists[id] = {
-                          state: TraverseState.inFlight,
-                        };
-                        return true;
-                      })
-                  )
-                  .then((nextArtists) =>
-                    receiveArtists(nextArtists, allArtists, update)
-                  )
+            runner(() =>
+              fetch(
+                `https://api.spotify.com/v1/artists/${id}/related-artists`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${tokens.access}`,
+                  },
+                }
+              ).then(jsonOrThrow)
+            ).then((json) =>
+              Promise.resolve()
+                .then(() =>
+                  json.artists
+                    .map(({ id }: { id: string }) => id)
+                    .filter((id: string) => {
+                      if (allArtists[id] !== undefined) return false;
+                      allArtists[id] = {
+                        state: TraverseState.inFlight,
+                      };
+                      return true;
+                    })
+                )
+                .then((nextArtists) =>
+                  receiveArtists(nextArtists, allArtists, update)
+                )
             )
           )
       )

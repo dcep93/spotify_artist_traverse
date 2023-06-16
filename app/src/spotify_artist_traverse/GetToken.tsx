@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchExt } from "./fetcher";
+import { fetchExt } from "./runner";
 
 const CLIENT_ID = "613898add293422983bbba619d9cc8fa";
 const REDIRECT_URI = window.location.href.replace(/(\?|#).*/, "");
@@ -54,12 +54,10 @@ export default function GetToken() {
       Promise.resolve()
         .then(() => [
           fetch(
-            `https://accounts.spotify.com/api/token?${Object.entries({
+            `https://accounts.spotify.com/api/token?${new URLSearchParams({
               grant_type: "refresh_token",
-              refresh_token: tokens.refresh,
-            })
-              .map(([key, value]) => `${key}=${encodeURIComponent(value!)}`)
-              .join("&")}`,
+              refresh_token: tokens.refresh!,
+            })}`,
             {
               headers: {
                 "content-type": "application/x-www-form-urlencoded",
@@ -72,6 +70,7 @@ export default function GetToken() {
               resp.ok
                 ? resp.json()
                 : resp.text().then((text) => {
+                    window.localStorage.removeItem(REFRESH_STORAGE_KEY);
                     throw new Error(text);
                   })
             )

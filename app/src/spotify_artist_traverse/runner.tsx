@@ -31,16 +31,17 @@ function releaseRunner() {
   setTimeout(n ? n : releaseRunner, SLEEP_MS);
 }
 
-export default function fetcher(
-  domain: string,
-  path: string,
-  params: { [key: string]: string } = {}
-): Promise<any> {
+export default function runner<T>(f: () => Promise<T>): Promise<T> {
   return Promise.resolve()
     .then(getRunner)
     .then(() => {
-      if (cancelled.cancelled) throw new Error(`cancelled ${domain}`);
-      return helper(domain, path, params);
+      if (cancelled.cancelled) throw new Error(`cancelled`);
+      return f();
+    })
+    .catch((err) => {
+      console.log(`cancelling`);
+      cancelled.cancelled = true;
+      throw err;
     })
     .finally(releaseRunner);
 }
@@ -74,6 +75,14 @@ function helper(
       cancelled.cancelled = true;
       throw err;
     });
+}
+
+export function jsonOrThrow(resp: Response) {
+  return resp.ok
+    ? resp.json()
+    : resp.text().then((text) => {
+        throw new Error(`fetch ${text}`);
+      });
 }
 
 export function fetchExt(
