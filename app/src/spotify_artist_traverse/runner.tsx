@@ -1,6 +1,6 @@
 const extension_id = "kmpbdkipjlpbckfnpbfbncddjaneeklc";
-const MAX_RUNNERS = 8;
-const SLEEP_MS = 100;
+const MAX_RUNNERS = 32;
+const SLEEP_MS = 10;
 
 export const cancelled: { cancelled?: boolean } = {};
 
