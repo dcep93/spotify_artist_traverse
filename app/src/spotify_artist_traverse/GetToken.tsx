@@ -3,7 +3,7 @@ import { fetchExt } from "./fetcher";
 
 const CLIENT_ID = "613898add293422983bbba619d9cc8fa";
 const REDIRECT_URI = window.location.href.replace(/(\?|#).*/, "");
-const REFRESH_STORAGE_KEY = `spotify_artist_traverse-access_token-refresh-v8  `;
+const REFRESH_STORAGE_KEY = `spotify_artist_traverse-access_token-refresh-v1`;
 const BEARER =
   "NjEzODk4YWRkMjkzNDIyOTgzYmJiYTYxOWQ5Y2M4ZmE6Mjg5OWMyMzg1NGE0NGRhNjkwNDM2Y2QzYTg1YzgzNzA=";
 
