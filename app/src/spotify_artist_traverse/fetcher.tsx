@@ -1,4 +1,4 @@
-import { getStoredToken } from "./GetToken";
+import { tokens } from "./GetToken";
 
 const extension_id = "kmpbdkipjlpbckfnpbfbncddjaneeklc";
 const MAX_RUNNERS = 10;
@@ -56,7 +56,7 @@ function helper(
       path.startsWith("/")
         ? fetch(`https://api.spotify.com/v1${path}`, {
             headers: {
-              Authorization: `Bearer ${getStoredToken().token}`,
+              Authorization: `Bearer ${tokens.access}`,
             },
           }).then((resp) =>
             resp.ok
@@ -74,7 +74,7 @@ function helper(
                   url: path,
                   options: {
                     headers: {
-                      Authorization: `Bearer ${getStoredToken().partnerToken}`,
+                      Authorization: `Bearer ${tokens.partner}`,
                     },
                   },
                 },

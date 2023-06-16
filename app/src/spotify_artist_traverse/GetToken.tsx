@@ -2,17 +2,16 @@ import { useEffect, useState } from "react";
 
 const CLIENT_ID = "613898add293422983bbba619d9cc8fa";
 const REDIRECT_URI = window.location.href.replace(/(\?|#).*/, "");
-const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize";
-const RESPONSE_TYPE = "token";
-const ACCESS_STORAGE_KEY = `spotify_artist_traverse-access_token-access-v1`;
+const REFRESH_STORAGE_KEY = `spotify_artist_traverse-access_token-refresh-v8  `;
 const PARTNER_STORAGE_KEY = `spotify_artist_traverse-access_token-partner-v1`;
+const BEARER =
+  "NjEzODk4YWRkMjkzNDIyOTgzYmJiYTYxOWQ5Y2M4ZmE6Mjg5OWMyMzg1NGE0NGRhNjkwNDM2Y2QzYTg1YzgzNzA=";
 
-export function getStoredToken() {
-  return {
-    token: window.localStorage.getItem(ACCESS_STORAGE_KEY), // TODO refresh
-    partnerToken: window.localStorage.getItem(PARTNER_STORAGE_KEY),
-  };
-}
+export const tokens = {
+  refresh: window.localStorage.getItem(REFRESH_STORAGE_KEY),
+  partner: window.localStorage.getItem(PARTNER_STORAGE_KEY),
+  access: "",
+};
 
 export function refreshPartnerToken() {
   window.localStorage.setItem(
@@ -21,33 +20,81 @@ export function refreshPartnerToken() {
   );
 }
 
+const memo = {} as { [k: string]: any };
+
 export default function GetToken() {
-  const [token, setToken] = useState(getStoredToken().token);
+  const [token, setToken] = useState(tokens.refresh === null ? false : null);
 
   useEffect(() => {
-    if (token) return;
-    const hash = window.location.hash;
-
-    if (hash) {
-      if (!getStoredToken().partnerToken) refreshPartnerToken();
-
-      window.location.hash = "";
-      const storedToken = hash
-        .substring(1)
-        .split("&")
-        .find((elem) => elem.startsWith("access_token"))!
-        .split("=")[1];
-      window.localStorage.setItem(ACCESS_STORAGE_KEY, storedToken);
-      setToken(storedToken);
+    if (memo.GetToken) return;
+    memo.GetToken = true;
+    const code = new URLSearchParams(window.location.search).get("code");
+    if (code) {
+      if (!tokens.partner) refreshPartnerToken();
+      fetch(
+        `https://accounts.spotify.com/api/token?${Object.entries({
+          grant_type: "authorization_code",
+          code,
+          redirect_uri: REDIRECT_URI,
+        })
+          .map(([key, value]) => `${key}=${encodeURIComponent(value!)}`)
+          .join("&")}`,
+        {
+          headers: {
+            "content-type": "application/x-www-form-urlencoded",
+            Authorization: `Basic ${BEARER}`,
+          },
+          method: "POST",
+        }
+      )
+        .then((resp) =>
+          resp.ok
+            ? resp.json()
+            : resp.text().then((text) => {
+                throw new Error(text);
+              })
+        )
+        .then((json) => {
+          window.localStorage.setItem(REFRESH_STORAGE_KEY, json.refresh_token);
+          window.location.href = "/";
+        });
+    } else if (tokens.refresh !== null) {
+      fetch(
+        `https://accounts.spotify.com/api/token?${Object.entries({
+          grant_type: "refresh_token",
+          refresh_token: tokens.refresh,
+        })
+          .map(([key, value]) => `${key}=${encodeURIComponent(value!)}`)
+          .join("&")}`,
+        {
+          headers: {
+            "content-type": "application/x-www-form-urlencoded",
+            Authorization: `Basic ${BEARER}`,
+          },
+          method: "POST",
+        }
+      )
+        .then((resp) =>
+          resp.ok
+            ? resp.json()
+            : resp.text().then((text) => {
+                throw new Error(text);
+              })
+        )
+        .then((json) => {
+          tokens.access = json.access_token;
+          console.log(tokens);
+          setToken(true);
+        });
     }
-  }, [token]);
+  }, []);
 
   return {
     token,
-    loginUrl: `${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`,
+    loginUrl: `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`,
     logout: () => {
-      window.localStorage.removeItem(ACCESS_STORAGE_KEY);
-      setToken(null);
+      window.localStorage.removeItem(REFRESH_STORAGE_KEY);
+      setToken(false);
     },
   };
 }

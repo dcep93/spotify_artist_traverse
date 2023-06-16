@@ -17,12 +17,14 @@ export default function Main() {
       });
   }, [token]);
 
-  if (!token)
+  if (token === false)
     return (
       <div>
         <a href={loginUrl}>login</a>
       </div>
     );
+
+  if (token === null) return null;
 
   return (
     <div>
