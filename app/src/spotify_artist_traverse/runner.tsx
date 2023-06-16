@@ -66,7 +66,7 @@ export function fetchExt(fetch: any): Promise<any> {
         if (!response.ok) {
           reject(`chrome: ${response.text}`);
         }
-        resolve(response.msg as any);
+        resolve(response.msg);
       }
     )
   );
