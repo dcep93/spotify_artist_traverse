@@ -52,22 +52,12 @@ export function jsonOrThrow(resp: Response) {
       });
 }
 
-export function fetchExt(
-  url: string,
-  json: boolean,
-  headers: { [k: string]: string }
-) {
+export function fetchExt(fetch: any): Promise<any> {
   return new Promise((resolve, reject) =>
     window.chrome.runtime.sendMessage(
       extension_id,
       {
-        fetch: {
-          json,
-          url,
-          options: {
-            headers,
-          },
-        },
+        fetch,
       },
       (response: any) => {
         if (window.chrome.runtime.lastError) {
@@ -76,7 +66,7 @@ export function fetchExt(
         if (!response.ok) {
           reject(`chrome: ${response.text}`);
         }
-        resolve(response.msg);
+        resolve(response.msg as any);
       }
     )
   );

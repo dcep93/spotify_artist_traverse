@@ -96,7 +96,7 @@ export default function GetToken() {
 }
 
 function refreshPartnerToken() {
-  return fetchExt("https://open.spotify.com", false, {})
+  return fetchExt({ url: `https://open.spotify.com`, noCache: true })
     .then((text: any) => text as string)
     .then((text: string) =>
       Promise.resolve()
