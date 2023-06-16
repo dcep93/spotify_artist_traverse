@@ -87,7 +87,7 @@ export default function GetToken() {
           setToken(true);
         });
     }
-  }, []);
+  }, [code]);
 
   return {
     token,
