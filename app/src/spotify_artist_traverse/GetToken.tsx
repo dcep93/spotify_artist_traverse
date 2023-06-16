@@ -78,9 +78,7 @@ export default function GetToken() {
           tokens.access = json.access_token;
         })
         .then(refreshPartnerToken)
-        .then(() => {
-          setToken(true);
-        });
+        .then(() => setToken(true));
     }
   }, [code]);
 
