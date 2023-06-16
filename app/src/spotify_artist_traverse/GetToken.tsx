@@ -23,12 +23,12 @@ export function refreshPartnerToken() {
 const memo = {} as { [k: string]: any };
 
 export default function GetToken() {
-  const [token, setToken] = useState(tokens.refresh === null ? false : null);
+  const code = new URLSearchParams(window.location.search).get("code");
+  const [token, setToken] = useState(code || tokens.refresh ? null : false);
 
   useEffect(() => {
     if (memo.GetToken) return;
     memo.GetToken = true;
-    const code = new URLSearchParams(window.location.search).get("code");
     if (code) {
       if (!tokens.partner) refreshPartnerToken();
       fetch(
