@@ -79,7 +79,6 @@ export default function GetToken() {
         })
         .then(refreshPartnerToken)
         .then(() => {
-          console.log(tokens);
           setToken(true);
         });
     }
