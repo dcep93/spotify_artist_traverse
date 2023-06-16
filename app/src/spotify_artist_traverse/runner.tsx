@@ -1,5 +1,3 @@
-import { tokens } from "./GetToken";
-
 const extension_id = "kmpbdkipjlpbckfnpbfbncddjaneeklc";
 const MAX_RUNNERS = 10;
 const SLEEP_MS = 100;
@@ -44,37 +42,6 @@ export default function runner<T>(f: () => Promise<T>): Promise<T> {
       throw err;
     })
     .finally(releaseRunner);
-}
-
-function helper(
-  domain: string,
-  path: string,
-  params: { [key: string]: string }
-) {
-  path = `${path}?${new URLSearchParams(params)}`;
-  return Promise.resolve()
-    .then(() =>
-      path.startsWith("/")
-        ? fetch(`https://api.spotify.com/v1${path}`, {
-            headers: {
-              Authorization: `Bearer ${tokens.access}`,
-            },
-          }).then((resp) =>
-            resp.ok
-              ? resp.json()
-              : resp.text().then((text) => {
-                  throw new Error(`fetch ${text}`);
-                })
-          )
-        : fetchExt(path, true, {
-            Authorization: `Bearer ${tokens.partner}`,
-          })
-    )
-    .catch((err) => {
-      console.log(`cancelling ${domain}`);
-      cancelled.cancelled = true;
-      throw err;
-    });
 }
 
 export function jsonOrThrow(resp: Response) {
