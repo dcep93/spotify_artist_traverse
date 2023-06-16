@@ -64,7 +64,27 @@ export function fetchExt(fetch: any): Promise<any> {
           reject(`chrome.runtime.lastError ${window.chrome.runtime.lastError}`);
         }
         if (!response.ok) {
-          reject(`chrome: ${response.text}`);
+          reject(`chrome.fetch: ${response.err}`);
+        }
+        resolve(response.msg);
+      }
+    )
+  );
+}
+
+export function storageExt(storage: any): Promise<any> {
+  return new Promise((resolve, reject) =>
+    window.chrome.runtime.sendMessage(
+      extension_id,
+      {
+        storage,
+      },
+      (response: any) => {
+        if (window.chrome.runtime.lastError) {
+          reject(`chrome.runtime.lastError ${window.chrome.runtime.lastError}`);
+        }
+        if (!response.ok) {
+          reject(`chrome.storage: ${response.err}`);
         }
         resolve(response.msg);
       }

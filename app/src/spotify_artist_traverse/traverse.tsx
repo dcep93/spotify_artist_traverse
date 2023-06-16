@@ -1,6 +1,6 @@
 import { tokens } from "./GetToken";
 import oneHitWonder from "./oneHitWonder";
-import runner, { fetchExt, jsonOrThrow } from "./runner";
+import runner, { fetchExt, jsonOrThrow, storageExt } from "./runner";
 
 const STORAGE_KEY = `spotify_artist_traverse-traverse-v4`;
 
@@ -19,9 +19,11 @@ export type StateType = { message?: string; allArtists?: AllArtistsType };
 const f = oneHitWonder;
 
 export default function traverse(update: (state: StateType) => void) {
-  const cached = window.localStorage.getItem(STORAGE_KEY);
-  return (
-    cached
+  return storageExt({
+    action: "get",
+    keys: [STORAGE_KEY],
+  }).then((cached) =>
+    (cached
       ? Promise.resolve()
           .then(() => JSON.parse(cached!))
           .then((allArtists: AllArtistsType) =>
@@ -77,7 +79,8 @@ export default function traverse(update: (state: StateType) => void) {
               .then((arrs) => arrs.flatMap((arr) => arr))
               .then((artists) => receiveArtists(artists, {}, update))
           )
-  ).then((allArtists) => update({ message: "done", allArtists }));
+    ).then((allArtists) => update({ message: "done", allArtists }))
+  );
 }
 
 function receiveArtists(
@@ -91,9 +94,11 @@ function receiveArtists(
         state: TraverseState.inFlight,
       })
   );
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(allArtists));
   update({ allArtists });
-  return Promise.resolve()
+  return storageExt({
+    action: "save",
+    save: { [STORAGE_KEY]: JSON.stringify(allArtists) },
+  })
     .then(() =>
       artists.map((id) =>
         runner(() =>
