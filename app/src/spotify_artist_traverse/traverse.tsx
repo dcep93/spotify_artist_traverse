@@ -18,6 +18,11 @@ export type StateType = { message?: string; allArtists?: AllArtistsType };
 
 const f = oneHitWonder;
 
+function log<T>(t: T): T {
+  console.log(t);
+  return t;
+}
+
 export default function traverse(update: (state: StateType) => void) {
   return storageExt({
     action: "get",
@@ -25,7 +30,7 @@ export default function traverse(update: (state: StateType) => void) {
   }).then((cached) =>
     (cached
       ? Promise.resolve()
-          .then(() => JSON.parse(cached!))
+          .then(() => JSON.parse(cached[STORAGE_KEY]))
           .then((allArtists: AllArtistsType) =>
             receiveArtists(
               Object.entries(allArtists)

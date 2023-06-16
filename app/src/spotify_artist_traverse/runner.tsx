@@ -86,7 +86,7 @@ export function storageExt(storage: any): Promise<any> {
         if (!response.ok) {
           reject(`chrome.storage: ${response.err}`);
         }
-        resolve(response.msg);
+        resolve(response.result);
       }
     )
   );
