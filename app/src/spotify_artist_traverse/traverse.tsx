@@ -35,7 +35,7 @@ export default function traverse(update: (state: StateType) => void) {
                       ([id, entry]) => entry.state === TraverseState.inFlight
                     )
                     .map(([id, entry]) => id)
-                    .slice(-1000),
+                    .slice(-3),
                   allArtists,
                   update
                 )
