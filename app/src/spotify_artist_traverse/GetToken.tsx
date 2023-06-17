@@ -4,8 +4,7 @@ import { fetchExt } from "./runner";
 const CLIENT_ID = "613898add293422983bbba619d9cc8fa";
 const REDIRECT_URI = window.location.href.replace(/(\?|#).*/, "");
 const REFRESH_STORAGE_KEY = `spotify_artist_traverse-access_token-refresh-v1`;
-const BEARER =
-  "NjEzODk4YWRkMjkzNDIyOTgzYmJiYTYxOWQ5Y2M4ZmE6Mjg5OWMyMzg1NGE0NGRhNjkwNDM2Y2QzYTg1YzgzNzA=";
+const BEARER = "";
 
 const REFRESH_PARTNER_TOKEN_MS = 60 * 1000;
 
@@ -24,62 +23,8 @@ export default function GetToken() {
   useEffect(() => {
     if (memo.GetToken) return;
     memo.GetToken = true;
-    if (code) {
-      fetch(
-        `https://accounts.spotify.com/api/token?${Object.entries({
-          grant_type: "authorization_code",
-          code,
-          redirect_uri: REDIRECT_URI,
-        })
-          .map(([key, value]) => `${key}=${encodeURIComponent(value!)}`)
-          .join("&")}`,
-        {
-          headers: {
-            "content-type": "application/x-www-form-urlencoded",
-            Authorization: `Basic ${BEARER}`,
-          },
-          method: "POST",
-        }
-      )
-        .then((resp) =>
-          resp.ok
-            ? resp.json()
-            : resp.text().then((text) => {
-                throw new Error(text);
-              })
-        )
-        .then((json) => {
-          window.localStorage.setItem(REFRESH_STORAGE_KEY, json.refresh_token);
-          window.location.href = "/";
-        });
-    } else if (tokens.refresh !== null) {
-      fetch(
-        `https://accounts.spotify.com/api/token?${new URLSearchParams({
-          grant_type: "refresh_token",
-          refresh_token: tokens.refresh!,
-        })}`,
-        {
-          headers: {
-            "content-type": "application/x-www-form-urlencoded",
-            Authorization: `Basic ${BEARER}`,
-          },
-          method: "POST",
-        }
-      )
-        .then((resp) =>
-          resp.ok
-            ? resp.json()
-            : resp.text().then((text) => {
-                window.localStorage.removeItem(REFRESH_STORAGE_KEY);
-                throw new Error(text);
-              })
-        )
-        .then((json) => {
-          tokens.access = json.access_token;
-        })
-        .then(refreshPartnerToken)
-        .then(() => setToken(true));
-    }
+    refreshPartnerToken();
+    // helper(code, token, setToken);
   }, [code]);
 
   return {
@@ -90,6 +35,69 @@ export default function GetToken() {
       setToken(false);
     },
   };
+}
+
+export function helper(
+  code: string | undefined,
+  token: boolean | null,
+  setToken: (token: boolean | null) => void
+) {
+  if (code) {
+    fetch(
+      `https://accounts.spotify.com/api/token?${Object.entries({
+        grant_type: "authorization_code",
+        code,
+        redirect_uri: REDIRECT_URI,
+      })
+        .map(([key, value]) => `${key}=${encodeURIComponent(value!)}`)
+        .join("&")}`,
+      {
+        headers: {
+          "content-type": "application/x-www-form-urlencoded",
+          Authorization: `Basic ${BEARER}`,
+        },
+        method: "POST",
+      }
+    )
+      .then((resp) =>
+        resp.ok
+          ? resp.json()
+          : resp.text().then((text) => {
+              throw new Error(text);
+            })
+      )
+      .then((json) => {
+        window.localStorage.setItem(REFRESH_STORAGE_KEY, json.refresh_token);
+        window.location.href = "/";
+      });
+  } else if (tokens.refresh !== null) {
+    fetch(
+      `https://accounts.spotify.com/api/token?${new URLSearchParams({
+        grant_type: "refresh_token",
+        refresh_token: tokens.refresh!,
+      })}`,
+      {
+        headers: {
+          "content-type": "application/x-www-form-urlencoded",
+          Authorization: `Basic ${BEARER}`,
+        },
+        method: "POST",
+      }
+    )
+      .then((resp) =>
+        resp.ok
+          ? resp.json()
+          : resp.text().then((text) => {
+              window.localStorage.removeItem(REFRESH_STORAGE_KEY);
+              throw new Error(text);
+            })
+      )
+      .then((json) => {
+        tokens.access = json.access_token;
+      })
+      .then(refreshPartnerToken)
+      .then(() => setToken(true));
+  }
 }
 
 function refreshPartnerToken() {
