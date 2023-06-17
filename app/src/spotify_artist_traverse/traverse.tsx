@@ -30,7 +30,8 @@ export default function traverse(update: (state: StateType) => void) {
             receiveArtists(
               Object.entries(allArtists)
                 .filter(([id, entry]) => entry.state === TraverseState.inFlight)
-                .map(([id, entry]) => id),
+                .map(([id, entry]) => id)
+                .slice(-1000),
               allArtists,
               update
             )
