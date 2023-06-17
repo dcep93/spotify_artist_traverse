@@ -14,12 +14,14 @@ export default function oneHitWonder(json: any) {
     .then((tracks) =>
       tracks.length >= 2 &&
       tracks[0].playcount > MIN_TOP_PLAYS &&
-      tracks[0].playcount > tracks[1].playcount * MIN_RATIO
+      tracks[0].playcount / tracks[1].playcount > MIN_RATIO
         ? {
             rank: tracks[0].playcount,
             value: {
               artist: json.data.artistUnion.profile.name,
-              ...tracks[0],
+              playcount: tracks[0].playcount,
+              track: tracks[0].track,
+              ratio: tracks[0].playcount / tracks[1].playcount,
             },
           }
         : undefined
