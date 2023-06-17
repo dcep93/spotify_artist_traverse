@@ -27,24 +27,30 @@ export default function traverse(update: (state: StateType) => void) {
       ? Promise.resolve()
           .then(() => JSON.parse(cached[STORAGE_KEY]))
           .then((allArtists: AllArtistsType) =>
-            receiveArtists(
-              Object.entries(allArtists)
-                .filter(([id, entry]) => entry.state === TraverseState.inFlight)
-                .map(([id, entry]) => id)
-                .slice(-1000),
-              allArtists,
-              update
-            )
+            Promise.resolve()
+              .then(() =>
+                receiveArtists(
+                  Object.entries(allArtists)
+                    .filter(
+                      ([id, entry]) => entry.state === TraverseState.inFlight
+                    )
+                    .map(([id, entry]) => id)
+                    .slice(-1000),
+                  allArtists,
+                  update
+                )
+              )
+              .finally(() => {
+                if (
+                  Object.entries(allArtists)
+                    .filter(
+                      ([id, entry]) => entry.state === TraverseState.inFlight
+                    )
+                    .map(([id, entry]) => id).length > 1000
+                )
+                  window.location.href = "";
+              })
           )
-          .then((allArtists) => {
-            if (
-              Object.entries(allArtists)
-                .filter(([id, entry]) => entry.state === TraverseState.inFlight)
-                .map(([id, entry]) => id).length > 1000
-            )
-              window.location.href = "";
-            return allArtists;
-          })
       : Promise.resolve()
           .then(() => update({ message: "fetching genres" }))
           .then(() =>
