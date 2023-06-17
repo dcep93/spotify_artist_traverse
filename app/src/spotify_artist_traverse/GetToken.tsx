@@ -23,7 +23,7 @@ export default function GetToken() {
   useEffect(() => {
     if (memo.GetToken) return;
     memo.GetToken = true;
-    refreshPartnerToken();
+    refreshPartnerToken().then(() => setToken(true));
     // helper(code, token, setToken);
   }, [code]);
 

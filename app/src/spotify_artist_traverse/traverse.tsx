@@ -23,7 +23,7 @@ function traverseCached(
   update: (state: StateType) => void,
   resolve: (allArtists: AllArtistsType) => void
 ): Promise<AllArtistsType> {
-  const num = 3;
+  const num = 100;
   const inFlight = Object.entries(allArtists)
     .filter(([id, entry]) => entry.state === TraverseState.inFlight)
     .map(([id, entry]) => id);
