@@ -36,6 +36,15 @@ export default function traverse(update: (state: StateType) => void) {
               update
             )
           )
+          .then((allArtists) => {
+            if (
+              Object.entries(allArtists)
+                .filter(([id, entry]) => entry.state === TraverseState.inFlight)
+                .map(([id, entry]) => id).length > 1000
+            )
+              window.location.href = "";
+            return allArtists;
+          })
       : Promise.resolve()
           .then(() => update({ message: "fetching genres" }))
           .then(() =>
