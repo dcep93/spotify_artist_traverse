@@ -18,6 +18,22 @@ export type StateType = { message?: string; allArtists?: AllArtistsType };
 
 const f = oneHitWonder;
 
+function traverseCached(
+  allArtists: AllArtistsType,
+  update: (state: StateType) => void,
+  resolve: (allArtists: AllArtistsType) => void
+): Promise<AllArtistsType> {
+  const num = 3;
+  const inFlight = Object.entries(allArtists)
+    .filter(([id, entry]) => entry.state === TraverseState.inFlight)
+    .map(([id, entry]) => id);
+  return receiveArtists(inFlight.slice(-num), allArtists, update).finally(() =>
+    inFlight.length <= num
+      ? resolve(allArtists)
+      : traverseCached(allArtists, update, resolve)
+  );
+}
+
 export default function traverse(update: (state: StateType) => void) {
   return storageExt({
     action: "get",
@@ -26,30 +42,11 @@ export default function traverse(update: (state: StateType) => void) {
     (cached
       ? Promise.resolve()
           .then(() => JSON.parse(cached[STORAGE_KEY]))
-          .then((allArtists: AllArtistsType) =>
-            Promise.resolve()
-              .then(() =>
-                receiveArtists(
-                  Object.entries(allArtists)
-                    .filter(
-                      ([id, entry]) => entry.state === TraverseState.inFlight
-                    )
-                    .map(([id, entry]) => id)
-                    .slice(-3),
-                  allArtists,
-                  update
-                )
+          .then(
+            (allArtists: AllArtistsType) =>
+              new Promise<AllArtistsType>((resolve) =>
+                traverseCached(allArtists, update, resolve)
               )
-              .finally(() => {
-                if (
-                  Object.entries(allArtists)
-                    .filter(
-                      ([id, entry]) => entry.state === TraverseState.inFlight
-                    )
-                    .map(([id, entry]) => id).length > 1000
-                )
-                  window.location.href = "";
-              })
           )
       : Promise.resolve()
           .then(() => update({ message: "fetching genres" }))
