@@ -2,7 +2,7 @@ import { tokens } from "./GetToken";
 import dump from "./dump";
 import runner, { fetchExt, jsonOrThrow, log, storageExt } from "./runner";
 
-const STORAGE_KEY = `spotify_artist_traverse-traverse-v5`;
+const STORAGE_KEY = `spotify_artist_traverse-traverse-v6`;
 
 export enum TraverseState {
   inFlight,
@@ -39,7 +39,7 @@ export default function traverse(update: (state: StateType) => void) {
     action: "get",
     keys: [STORAGE_KEY],
   }).then((cached) =>
-    (cached
+    (cached && cached[STORAGE_KEY]
       ? Promise.resolve()
           .then(() => JSON.parse(cached[STORAGE_KEY]))
           .then(
@@ -84,7 +84,7 @@ export default function traverse(update: (state: StateType) => void) {
                       }
                     ).then(jsonOrThrow)
                   ).then((json) =>
-                    json.artists.items.map((item: any) => item.id)
+                    (json.artists.items as any[]).map((item) => item.id)
                   )
                 )
               )

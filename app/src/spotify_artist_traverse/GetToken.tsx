@@ -4,7 +4,7 @@ import { fetchExt } from "./runner";
 const CLIENT_ID = "613898add293422983bbba619d9cc8fa";
 const REDIRECT_URI = window.location.href.replace(/(\?|#).*/, "");
 const REFRESH_STORAGE_KEY = `spotify_artist_traverse-access_token-refresh-v1`;
-const BEARER = "";
+const BEARER = "xxx=";
 
 const REFRESH_PARTNER_TOKEN_MS = 60 * 1000;
 
@@ -23,9 +23,9 @@ export default function GetToken() {
   useEffect(() => {
     if (memo.GetToken) return;
     memo.GetToken = true;
-    refreshPartnerToken().then(() => setToken(true));
-    // helper(code, token, setToken);
-  }, [code]);
+    // refreshPartnerToken().then(() => setToken(true));
+    helper(code, token, setToken);
+  }, [code, token]);
 
   return {
     token,
@@ -38,7 +38,7 @@ export default function GetToken() {
 }
 
 export function helper(
-  code: string | undefined,
+  code: string | null,
   token: boolean | null,
   setToken: (token: boolean | null) => void
 ) {

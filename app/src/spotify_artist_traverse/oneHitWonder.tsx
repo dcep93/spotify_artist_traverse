@@ -4,12 +4,12 @@ const MIN_RATIO = 10;
 export default function oneHitWonder(json: any) {
   return Promise.resolve()
     .then(() =>
-      json.data.artistUnion.discography.topTracks.items
-        .map((item: any) => ({
+      (json.data.artistUnion.discography.topTracks.items as any[])
+        .map((item) => ({
           track: item.track.name,
           playcount: parseInt(item.track.playcount),
         }))
-        .sort((a: any, b: any) => b.playcount - a.playcount)
+        .sort((a, b) => b.playcount - a.playcount)
     )
     .then((tracks) =>
       tracks.length >= 2 &&
