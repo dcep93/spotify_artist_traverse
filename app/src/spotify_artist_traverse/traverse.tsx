@@ -1,8 +1,8 @@
 import { tokens } from "./GetToken";
-import oneHitWonder from "./oneHitWonder";
+import dump from "./dump";
 import runner, { fetchExt, jsonOrThrow, log, storageExt } from "./runner";
 
-const STORAGE_KEY = `spotify_artist_traverse-traverse-v4`;
+const STORAGE_KEY = `spotify_artist_traverse-traverse-v5`;
 
 export enum TraverseState {
   inFlight,
@@ -16,7 +16,7 @@ export type AllArtistsType = {
 
 export type StateType = { message?: string; allArtists?: AllArtistsType };
 
-const f = oneHitWonder;
+const f = dump;
 
 function traverseCached(
   allArtists: AllArtistsType,
