@@ -7,7 +7,8 @@ export default function dump(json: any) {
       rank: (json.data.artistUnion.discography.topTracks.items as any[])
         .map((item) => parseInt(item.track.playcount))
         .reduce((a, b) => a + b, 0),
-    }));
+    }))
+    .then((obj) => ({ value: `${obj.value} - ${obj.rank}`, rank: obj.rank }));
 }
 
 function save(data: any) {

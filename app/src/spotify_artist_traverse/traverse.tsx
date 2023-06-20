@@ -2,7 +2,7 @@ import { tokens } from "./GetToken";
 import dump from "./dump";
 import runner, { fetchExt, jsonOrThrow, log, storageExt } from "./runner";
 
-const STORAGE_KEY = `spotify_artist_traverse-traverse-v6`;
+const STORAGE_KEY = `spotify_artist_traverse-traverse-v7`;
 
 export enum TraverseState {
   inFlight,
