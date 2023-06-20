@@ -52,43 +52,18 @@ export function jsonOrThrow(resp: Response) {
       });
 }
 
-export function fetchExt(fetch: any): Promise<any> {
+export function ext(data: any): Promise<any> {
   return new Promise((resolve, reject) =>
-    window.chrome.runtime.sendMessage(
-      extension_id,
-      {
-        fetch,
-      },
-      (response: any) => {
-        if (window.chrome.runtime.lastError) {
-          reject(`chrome.runtime.lastError ${window.chrome.runtime.lastError}`);
-        }
-        if (!response.ok) {
-          reject(`chrome.fetch: ${response.err}`);
-        }
-        resolve(response.msg);
+    window.chrome.runtime.sendMessage(extension_id, data, (response: any) => {
+      if (window.chrome.runtime.lastError) {
+        reject(`chrome.runtime.lastError ${window.chrome.runtime.lastError}`);
       }
-    )
-  );
-}
-
-export function storageExt(storage: any): Promise<any> {
-  return new Promise((resolve, reject) =>
-    window.chrome.runtime.sendMessage(
-      extension_id,
-      {
-        storage,
-      },
-      (response: any) => {
-        if (window.chrome.runtime.lastError) {
-          reject(`chrome.runtime.lastError ${window.chrome.runtime.lastError}`);
-        }
-        if (!response.ok) {
-          reject(`chrome.storage: ${response.err}`);
-        }
-        resolve(response.result);
+      if (!response.ok) {
+        console.log(data, response);
+        reject(`chrome: ${response.err}`);
       }
-    )
+      resolve(response.data);
+    })
   );
 }
 

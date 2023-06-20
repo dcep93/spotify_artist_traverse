@@ -1,3 +1,5 @@
+import { ext } from "./runner";
+
 export default function dump(json: any) {
   return Promise.resolve()
     .then(() => json.data.artistUnion)
@@ -12,5 +14,7 @@ export default function dump(json: any) {
 }
 
 function save(data: any) {
-  console.log(data);
+  return ext({
+    download: { data, type: "application/json", name: `${data.id}.json` },
+  });
 }

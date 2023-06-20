@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchExt } from "./runner";
+import { ext, jsonOrThrow } from "./runner";
 
 const CLIENT_ID = "613898add293422983bbba619d9cc8fa";
 const REDIRECT_URI = window.location.href.replace(/(\?|#).*/, "");
@@ -62,13 +62,7 @@ export function helper(
         method: "POST",
       }
     )
-      .then((resp) =>
-        resp.ok
-          ? resp.json()
-          : resp.text().then((text) => {
-              throw new Error(text);
-            })
-      )
+      .then(jsonOrThrow)
       .then((json) => {
         window.localStorage.setItem(REFRESH_STORAGE_KEY, json.refresh_token);
         window.location.href = "/";
@@ -88,12 +82,10 @@ export function helper(
       }
     )
       .then((resp) =>
-        resp.ok
-          ? resp.json()
-          : resp.text().then((text) => {
-              window.localStorage.removeItem(REFRESH_STORAGE_KEY);
-              throw new Error(text);
-            })
+        jsonOrThrow(resp).catch((err) => {
+          window.localStorage.removeItem(REFRESH_STORAGE_KEY);
+          throw err;
+        })
       )
       .then((json) => {
         tokens.access = json.access_token;
@@ -104,9 +96,9 @@ export function helper(
 }
 
 function refreshPartnerToken() {
-  return fetchExt({ url: `https://open.spotify.com`, noCache: true })
-    .then((text: any) => text as string)
-    .then((text: string) =>
+  return ext({ fetch: { url: `https://open.spotify.com`, noCache: true } })
+    .then((resp: any) => resp.msg as string)
+    .then((text) =>
       Promise.resolve()
         .then(() => text.match(/"accessToken":"(.*?)"/))
         .then((match) => match && match[1])
