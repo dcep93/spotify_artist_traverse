@@ -180,7 +180,7 @@ function debounceSave(
     timeout = setTimeout(() => {
       timeout = undefined;
       saveHelper(writeCache);
-    }, 1000);
+    }, 10 * 1000);
 }
 
 function saveHelper(writeCache: (allArtists: AllArtistsType) => void) {
