@@ -20,7 +20,11 @@ fs.readFile("./node/secrets.json", (err, raw) =>
     .then((db) => {
       console.log("connected");
       dumpVars.collection = db.db("db").collection("collection");
-      return db.close();
+      console.log("traversing");
+      return Promise.resolve().then(() => {
+        dumpVars.collection = null;
+        return db.close();
+      });
     })
     .then(() => clearTimeout(tokens.timeout))
     .then(() => console.log("done"))
