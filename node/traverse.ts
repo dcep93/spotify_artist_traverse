@@ -124,6 +124,7 @@ function receiveArtists(
           })
             .then((resp) => resp.msg)
             .then((json) => {
+              if (!json) throw new Error("no json");
               if (json.errors) throw new Error(JSON.stringify(json.errors));
               return json;
             })
