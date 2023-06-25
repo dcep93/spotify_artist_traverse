@@ -28,7 +28,6 @@ export default function traverse() {
     }).then(jsonOrThrow)
   )
     .then((resp) => resp.genres)
-    .then(log)
     .then((genres) =>
       genres.map((genre: string) =>
         runner(() =>
@@ -43,15 +42,13 @@ export default function traverse() {
                 Authorization: `Bearer ${tokens.access}`,
               },
             }
-          )
-            .then(jsonOrThrow)
-            .then(log)
+          ).then(jsonOrThrow)
         ).then((json) => (json.artists.items as any[]).map((item) => item.id))
       )
     )
     .then((ps) => Promise.all(ps))
-    .then(log)
     .then((arrs) => arrs.flatMap((arr) => arr))
+    .then(log)
     .then((artists) => receiveArtists(artists, {}));
 }
 

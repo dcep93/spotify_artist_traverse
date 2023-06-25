@@ -1,5 +1,5 @@
-const MAX_RUNNERS = 1;
-const SLEEP_MS = 500;
+const MAX_RUNNERS = 32;
+const SLEEP_MS = 10;
 
 export const cancelled: { cancelled?: boolean } = {};
 
