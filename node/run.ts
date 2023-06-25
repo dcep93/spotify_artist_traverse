@@ -4,7 +4,7 @@ import * as fs from "fs";
 import { MongoClient } from "mongodb";
 
 import { dumpVars } from "./dump";
-import { getToken } from "./getToken";
+import { getToken, tokens } from "./getToken";
 import traverse from "./traverse";
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/";
@@ -25,7 +25,7 @@ fs.readFile("./node/secrets.json", (err, raw) =>
       traverse().then(() => {
         dumpVars.collection = null;
         db.close();
-        console.log("done!");
       });
     })
+    .then(() => clearTimeout(tokens.timeout))
 );

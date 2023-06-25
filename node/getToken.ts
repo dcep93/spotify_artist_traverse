@@ -6,6 +6,7 @@ const REFRESH_PARTNER_TOKEN_MS = 60 * 1000;
 export const tokens = {
   partner: "",
   access: "",
+  timeout: null,
 };
 
 export function getToken(args: { refreshToken: string; bearer: string }) {
@@ -46,6 +47,9 @@ function refreshPartnerToken() {
     )
     .then(() => {
       log(tokens);
-      setTimeout(refreshPartnerToken, REFRESH_PARTNER_TOKEN_MS);
+      tokens.timeout = setTimeout(
+        refreshPartnerToken,
+        REFRESH_PARTNER_TOKEN_MS
+      );
     });
 }
