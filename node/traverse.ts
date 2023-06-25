@@ -105,13 +105,7 @@ function receiveArtists(
                   .then(() =>
                     json.data.artistUnion.relatedContent.relatedArtists.items
                       .map(({ id }: { id: string }) => id)
-                      .filter((id: string) => {
-                        if (allArtists[id] !== undefined) return false;
-                        allArtists[id] = {
-                          state: TraverseState.inFlight,
-                        };
-                        return true;
-                      })
+                      .filter((id) => allArtists[id]?.value)
                   )
                   .then((nextArtists) =>
                     receiveArtists(nextArtists, allArtists)
