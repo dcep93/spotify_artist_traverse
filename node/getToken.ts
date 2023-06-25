@@ -46,6 +46,7 @@ export function refreshPartnerToken() {
         })
     )
     .then(() => {
+      delete tokens.timeout;
       log(tokens);
       if (dumpVars.collection) {
         tokens.timeout = setTimeout(
