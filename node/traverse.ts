@@ -48,7 +48,6 @@ export default function traverse() {
     )
     .then((ps) => Promise.all(ps))
     .then((arrs) => arrs.flatMap((arr) => arr))
-    .then(log)
     .then((artists) => receiveArtists(artists, {}))
     .then(() => {
       clearTimeout(timeout);
