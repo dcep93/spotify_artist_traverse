@@ -111,10 +111,13 @@ function receiveArtists(
               )
               .then(() =>
                 Promise.resolve()
-                  .then(() =>
-                    json.data.artistUnion.relatedContent.relatedArtists.items
-                      .map(({ id }: { id: string }) => id)
-                      .filter((id) => allArtists[id]?.value)
+                  .then(
+                    () =>
+                      json.data?.artistUnion.relatedContent.relatedArtists
+                        .items ||
+                      []
+                        .map(({ id }: { id: string }) => id)
+                        .filter((id) => allArtists[id]?.value)
                   )
                   .then((nextArtists) =>
                     receiveArtists(nextArtists, allArtists)
