@@ -43,7 +43,7 @@ function save(data: any) {
   return dumpVars.collection
     .insertOne({ ...data, _id: data.id })
     .catch((err) => {
-      console.log("wtf", err.code);
+      if (err.code === 11000) return;
       throw err;
     });
 }
