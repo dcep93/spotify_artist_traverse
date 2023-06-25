@@ -26,6 +26,7 @@ function getRunner() {
 }
 
 function releaseRunner() {
+  return;
   const n = queue.pop();
   dumpVars.collection && setTimeout(n ? n : releaseRunner, SLEEP_MS);
 }

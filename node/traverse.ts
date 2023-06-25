@@ -74,8 +74,8 @@ function getToTraverse() {
             .then(jsonOrThrow)
             .then(
               (json) =>
-                new Promise<any>((resolve) =>
-                  setTimeout(() => resolve(json), 1000)
+                new Promise<any>(
+                  (resolve) => false && setTimeout(() => resolve(json), 1000)
                 )
             )
         ).then((json) => (json.artists.items as any[]).map((item) => item.id))
@@ -165,6 +165,7 @@ function debounceSave(
   writeCache: (allArtists: AllArtistsType) => void
 ) {
   allArtistsToSave = allArtists;
+  return;
   if (timeout === undefined)
     timeout = setTimeout(() => {
       timeout = undefined;
