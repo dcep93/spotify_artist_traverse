@@ -27,7 +27,7 @@ export default function traverse() {
       },
     }).then(jsonOrThrow)
   )
-    .then((resp) => resp.genres)
+    .then((resp) => resp.genres.slice(0, 1))
     .then((genres) =>
       genres.map((genre: string) =>
         runner(() =>
@@ -126,7 +126,7 @@ function receiveArtists(
                     .then(
                       (nextArtists) =>
                         nextArtists.length > 0 &&
-                        receiveArtists(log(nextArtists), allArtists)
+                        receiveArtists(nextArtists, allArtists)
                     )
                 )
             )

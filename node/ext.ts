@@ -1,5 +1,4 @@
 export default function ext(data: any): Promise<any> {
-  console.log(data);
   return new Promise((resolve, reject) =>
     fetch(data.fetch.url, data.fetch.options)
       .then((resp: any) =>
