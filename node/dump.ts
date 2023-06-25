@@ -16,8 +16,8 @@ export default function dump(json: any) {
 
         discography,
         ...data
-      }) => {
-        return save({
+      }) =>
+        Promise.resolve({
           ...data,
           discography: {
             topTracks: {
@@ -41,8 +41,7 @@ export default function dump(json: any) {
           .then((obj) => ({
             value: `${obj.value} - ${obj.rank}`,
             rank: obj.rank,
-          }));
-      }
+          }))
     );
 }
 
