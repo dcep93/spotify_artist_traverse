@@ -42,12 +42,17 @@ export default function dump(json: any) {
 function save(data: any) {
   return new Promise((resolve, reject) => {
     try {
-      dumpVars.collection.insertOne({ ...data, _id: data.id }, (err, res) => {
-        if (err) {
-          console.log("err");
-          return reject(err);
-        }
-      });
+      dumpVars.collection
+        .insertOne({ ...data, _id: data.id }, (err, res) => {
+          if (err) {
+            console.log("err");
+            return reject(err);
+          }
+        })
+        .catch((err) => {
+          console.log("wtf");
+          throw err;
+        });
     } catch (error) {
       console.log("other err");
     }
