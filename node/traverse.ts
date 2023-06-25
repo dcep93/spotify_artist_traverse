@@ -126,7 +126,7 @@ function receiveArtists(
                     .then(
                       (nextArtists) =>
                         nextArtists.length > 0 &&
-                        receiveArtists(nextArtists, allArtists)
+                        receiveArtists(log(nextArtists), allArtists)
                     )
                 )
             )
