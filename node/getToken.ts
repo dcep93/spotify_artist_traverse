@@ -26,11 +26,10 @@ export function getToken(args: { refreshToken: string; bearer: string }) {
     .then(jsonOrThrow)
     .then((json) => {
       tokens.access = json.access_token;
-    })
-    .then(refreshPartnerToken);
+    });
 }
 
-function refreshPartnerToken() {
+export function refreshPartnerToken() {
   return ext({ fetch: { url: `https://open.spotify.com`, noCache: true } })
     .then((resp: any) => resp.msg as string)
     .then((text) =>

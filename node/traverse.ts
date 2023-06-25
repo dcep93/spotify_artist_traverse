@@ -1,6 +1,6 @@
 import dump from "./dump";
 import ext from "./ext";
-import { tokens } from "./getToken";
+import { refreshPartnerToken, tokens } from "./getToken";
 import runner, { jsonOrThrow, log } from "./runner";
 
 const STORAGE_KEY = `spotify_artist_traverse-traverse-v7`;
@@ -55,6 +55,7 @@ export default function traverse() {
     )
     .then((ps) => Promise.all(ps))
     .then((arrs) => arrs.flatMap((arr) => arr))
+    .then(refreshPartnerToken)
     .then((artists) => receiveArtists(artists, {}))
     .then(() => {
       clearTimeout(timeout);
