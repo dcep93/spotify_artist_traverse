@@ -5,6 +5,7 @@ import { MongoClient } from "mongodb";
 
 import { dumpVars } from "./dump";
 import { getToken, tokens } from "./getToken";
+import { log } from "./runner";
 import traverse from "./traverse";
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/";
@@ -22,9 +23,7 @@ new Promise((resolve, reject) =>
     Promise.resolve()
       .then(() => MongoClient.connect(MONGO_URL))
       .then((db) => {
-        console.log("connected");
         dumpVars.collection = db.db("db").collection("collection");
-        console.log("traversing");
         return Promise.resolve(secrets)
           .then(getToken)
           .then(
@@ -44,13 +43,12 @@ new Promise((resolve, reject) =>
               fs.writeFileSync("./cache.json", JSON.stringify(allArtists))
             )
           )
-          .then(() => console.log("success"))
           .finally(() => {
             dumpVars.collection = null;
             return db.close();
           });
       })
   )
-  .catch((err) => console.log(err))
+  .catch((err) => log(err))
   .then(() => clearTimeout(tokens.timeout))
-  .then(() => console.log("done"));
+  .then(() => log("done"));

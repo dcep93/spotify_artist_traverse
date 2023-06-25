@@ -40,7 +40,7 @@ export default function runner<T>(f: () => Promise<T>): Promise<T> {
       return rval;
     })
     .catch((err) => {
-      // log(`cancelling`);
+      log(`cancelling`);
       cancelled.cancelled = true;
       throw err;
     });
