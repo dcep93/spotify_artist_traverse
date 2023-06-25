@@ -44,17 +44,13 @@ new Promise((resolve, reject) =>
               fs.writeFileSync("./cache.json", JSON.stringify(allArtists))
             )
           )
-          .then(() => console.log("done"))
+          .then(() => console.log("success"))
           .then(() => {
             dumpVars.collection = null;
             return db.close();
           });
       })
-      .catch((err) => {
-        console.log("wut1");
-        throw err;
-      })
   )
-  .catch((err) => console.log("wut3", err))
+  .catch((err) => console.log(err))
   .then(() => clearTimeout(tokens.timeout))
-  .then(() => console.log("exiting"));
+  .then(() => console.log("done"));
