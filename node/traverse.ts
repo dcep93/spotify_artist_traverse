@@ -78,6 +78,10 @@ function receiveArtists(
   );
   return Promise.resolve()
     .then(() => debounceSave(allArtists))
+    .then((x) => {
+      console.log("a");
+      return x;
+    })
     .then(() =>
       artists.map((id) =>
         runner(() =>
@@ -100,6 +104,10 @@ function receiveArtists(
             },
           })
             .then((resp) => resp.msg)
+            .then((x) => {
+              console.log("b");
+              return x;
+            })
             .then((json) =>
               Promise.resolve()
                 .then(() => f(json))
@@ -113,6 +121,10 @@ function receiveArtists(
                       value,
                     })
                 )
+                .then((x) => {
+                  console.log("c");
+                  return x;
+                })
                 .then(() =>
                   Promise.resolve()
                     .then(() =>
@@ -141,7 +153,6 @@ function receiveArtists(
 var timeout: ReturnType<typeof setTimeout> | undefined;
 var allArtistsToSave: AllArtistsType | undefined;
 function debounceSave(allArtists: AllArtistsType) {
-  saveHelper();
   allArtistsToSave = allArtists;
   if (timeout === undefined)
     timeout = setTimeout(() => {
