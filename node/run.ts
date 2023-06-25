@@ -1,5 +1,6 @@
-function f(s: string): void {
-  console.log(s);
-}
+import * as fs from "fs";
 
-f("gotem");
+import { getToken } from "./getToken";
+import traverse from "./traverse";
+
+fs.readFile("./secrets.json").then(getToken).then(traverse);
