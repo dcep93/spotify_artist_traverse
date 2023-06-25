@@ -1,5 +1,5 @@
 import ext from "./ext";
-import { jsonOrThrow } from "./runner";
+import { jsonOrThrow, log } from "./runner";
 
 const REFRESH_PARTNER_TOKEN_MS = 60 * 1000;
 
@@ -38,14 +38,14 @@ function refreshPartnerToken() {
         .then((match) => match && match[1])
         .then((partnerToken) => {
           if (!partnerToken) {
-            console.log(text);
+            log(text);
             throw new Error("no partner token");
           }
           tokens.partner = partnerToken;
         })
     )
     .then(() => {
-      console.log(tokens);
+      log(tokens);
       setTimeout(refreshPartnerToken, REFRESH_PARTNER_TOKEN_MS);
     });
 }

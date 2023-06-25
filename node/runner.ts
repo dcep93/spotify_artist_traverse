@@ -36,7 +36,7 @@ export default function runner<T>(f: () => Promise<T>): Promise<T> {
       return f();
     })
     .catch((err) => {
-      console.log(`cancelling`);
+      log(`cancelling`);
       cancelled.cancelled = true;
       throw err;
     })
