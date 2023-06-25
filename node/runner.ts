@@ -1,6 +1,6 @@
 import { dumpVars } from "./dump";
 
-const MAX_RUNNERS = 8;
+const MAX_RUNNERS = 16;
 const SLEEP_MS = 100;
 
 export const cancelled: { cancelled?: boolean } = {};
