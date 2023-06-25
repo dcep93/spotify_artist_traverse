@@ -22,10 +22,11 @@ fs.readFile("./node/secrets.json", (err, raw) =>
       console.log("connected");
       dumpVars.collection = db.db("db").collection("collection");
       console.log("traversing");
-      traverse().then(() => {
+      return traverse().then(() => {
         dumpVars.collection = null;
         db.close();
       });
     })
     .then(() => clearTimeout(tokens.timeout))
+    .then(() => console.log("alldone"))
 );
