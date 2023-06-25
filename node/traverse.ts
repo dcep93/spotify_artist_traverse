@@ -126,7 +126,7 @@ function receiveArtists(
                         json.data?.artistUnion.relatedContent.relatedArtists
                           .items ||
                         []
-                          .map(({ id }: { id: string }) => id)
+                          .map(({ id }: { id: string }) => log(id))
                           .filter((id) => !allArtists[id]?.value)
                     )
                     .then((nextArtists) =>
@@ -145,7 +145,6 @@ function receiveArtists(
 var timeout: ReturnType<typeof setTimeout> | undefined;
 var allArtistsToSave: AllArtistsType | undefined;
 function debounceSave(allArtists: AllArtistsType) {
-  saveHelper();
   allArtistsToSave = allArtists;
   if (timeout === undefined)
     timeout = setTimeout(() => {
