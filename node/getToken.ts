@@ -1,3 +1,4 @@
+import { dumpVars } from "./dump";
 import ext from "./ext";
 import { jsonOrThrow, log } from "./runner";
 
@@ -46,9 +47,11 @@ export function refreshPartnerToken() {
     )
     .then(() => {
       log(tokens);
-      tokens.timeout = setTimeout(
-        refreshPartnerToken,
-        REFRESH_PARTNER_TOKEN_MS
-      );
+      if (dumpVars.collection) {
+        tokens.timeout = setTimeout(
+          refreshPartnerToken,
+          REFRESH_PARTNER_TOKEN_MS
+        );
+      }
     });
 }
