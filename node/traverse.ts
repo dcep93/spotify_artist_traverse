@@ -123,8 +123,10 @@ function receiveArtists(
                         .map(({ id }: { id: string }) => id)
                         .filter((id) => !allArtists[id]?.value)
                     )
-                    .then((nextArtists) =>
-                      receiveArtists(nextArtists, allArtists)
+                    .then(
+                      (nextArtists) =>
+                        nextArtists.length > 0 &&
+                        receiveArtists(nextArtists, allArtists)
                     )
                 )
             )
