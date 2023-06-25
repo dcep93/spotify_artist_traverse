@@ -22,6 +22,7 @@ export function getToken(args: { refreshToken: string; bearer: string }) {
       method: "POST",
     }
   )
+    .then(log)
     .then(jsonOrThrow)
     .then((json) => {
       tokens.access = json.access_token;
