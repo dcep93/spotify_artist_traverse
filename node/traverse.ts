@@ -100,10 +100,6 @@ function receiveArtists(
             },
           })
             .then((resp) => resp.msg)
-            .then((x) => {
-              console.log("a");
-              return x;
-            })
             .then((json) =>
               Promise.resolve()
                 .then(() => f(json))
@@ -117,10 +113,6 @@ function receiveArtists(
                       value,
                     })
                 )
-                .then((x) => {
-                  console.log("b");
-                  return x;
-                })
                 .then(() =>
                   Promise.resolve()
                     .then(() =>
@@ -131,6 +123,10 @@ function receiveArtists(
                         .map(({ id }: { id: string }) => id)
                         .filter((id) => !allArtists[id]?.value)
                     )
+                    .then((x) => {
+                      console.log("b");
+                      return x;
+                    })
                     .then(
                       (nextArtists) =>
                         nextArtists.length > 0 &&
