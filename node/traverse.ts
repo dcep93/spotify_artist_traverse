@@ -30,7 +30,8 @@ export default function traverse(
             .filter(
               ([key, val]) => (val as any).state === TraverseState.inFlight
             )
-            .map(([key, val]) => key),
+            .map(([key, val]) => key)
+            .slice(0, 1),
           allArtists,
         }))
       : getToTraverse()
