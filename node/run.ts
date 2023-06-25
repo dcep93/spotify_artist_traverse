@@ -16,9 +16,13 @@ fs.readFile("./node/secrets.json", (err, raw) =>
     .then(JSON.parse)
     .then(getToken)
     .then(() => {
+      console.log("connecting");
       MongoClient.connect(MONGO_URL, function (err, db) {
+        console.log("connected");
         if (err) throw err;
+        console.log("no err");
         dumpVars.collection = db.db("db").collection("collection");
+        console.log("traversing");
         traverse().then(() => {
           dumpVars.collection = null;
           db.close();
