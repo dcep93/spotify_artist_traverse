@@ -1,3 +1,5 @@
+import { log } from "./runner";
+
 export default function ext(data: any): Promise<any> {
   return new Promise((resolve, reject) => {
     try {
@@ -7,6 +9,7 @@ export default function ext(data: any): Promise<any> {
             ? resp
                 .text()
                 .then((text) => ({ text, data }))
+                .then(log)
                 .then(reject)
             : (data.fetch.json ? resp.json() : resp.text()).then((msg) => ({
                 msg,
@@ -17,6 +20,7 @@ export default function ext(data: any): Promise<any> {
     } catch (e) {
       Promise.resolve()
         .then(() => ({ e }))
+        .then(log)
         .then(reject);
     }
   });
