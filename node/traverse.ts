@@ -121,13 +121,13 @@ function receiveArtists(
                 )
                 .then(() =>
                   Promise.resolve()
-                    .then(
-                      () =>
+                    .then(() =>
+                      (
                         json.data?.artistUnion.relatedContent.relatedArtists
-                          .items ||
-                        []
-                          .map(({ id }: { id: string }) => id)
-                          .filter((id) => !allArtists[id]?.value)
+                          .items || []
+                      )
+                        .map(({ id }: { id: string }) => id)
+                        .filter((id) => !allArtists[id]?.value)
                     )
                     .then((nextArtists) =>
                       receiveArtists(log(nextArtists), allArtists)
