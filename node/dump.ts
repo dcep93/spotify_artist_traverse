@@ -16,7 +16,7 @@ export default function dump(json: any) {
         discography,
         ...data
       }) => {
-        if (!profile) console.log(json);
+        if (!profile) console.log("noprofile", json);
         return save({
           ...data,
           discography: {
