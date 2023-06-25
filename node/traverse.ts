@@ -49,7 +49,11 @@ export default function traverse() {
     .then((ps) => Promise.all(ps))
     .then((arrs) => arrs.flatMap((arr) => arr))
     .then(log)
-    .then((artists) => receiveArtists(artists.slice(0, 1), {}));
+    .then((artists) => receiveArtists(artists.slice(0, 1), {}))
+    .then(() => {
+      clearTimeout(timeout);
+      saveHelper();
+    });
 }
 
 function receiveArtists(
@@ -125,18 +129,21 @@ function debounceSave(allArtists: AllArtistsType) {
   if (timeout === undefined)
     timeout = setTimeout(() => {
       timeout = undefined;
-      Promise.resolve()
-        .then(() =>
-          Object.values(TraverseState).filter((s: any) => !isNaN(parseInt(s)))
-        )
-        .then((states) =>
-          states.map((state) => [
-            TraverseState[state],
-            Object.values(allArtistsToSave).filter((o) => o.state === state)
-              .length,
-          ])
-        )
-        .then(Object.fromEntries)
-        .then(log);
+      saveHelper();
     }, 1000);
+}
+
+function saveHelper() {
+  Promise.resolve()
+    .then(() =>
+      Object.values(TraverseState).filter((s: any) => !isNaN(parseInt(s)))
+    )
+    .then((states) =>
+      states.map((state) => [
+        TraverseState[state],
+        Object.values(allArtistsToSave).filter((o) => o.state === state).length,
+      ])
+    )
+    .then(Object.fromEntries)
+    .then(log);
 }
