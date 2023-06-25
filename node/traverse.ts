@@ -27,7 +27,7 @@ export default function traverse() {
       },
     }).then(jsonOrThrow)
   )
-    .then((resp) => resp.genres)
+    .then((resp) => resp.genres.slice(0, 1))
     .then((genres) =>
       genres.map((genre: string) =>
         runner(() =>
