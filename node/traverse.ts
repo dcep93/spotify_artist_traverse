@@ -141,6 +141,7 @@ function receiveArtists(
 var timeout: ReturnType<typeof setTimeout> | undefined;
 var allArtistsToSave: AllArtistsType | undefined;
 function debounceSave(allArtists: AllArtistsType) {
+  saveHelper();
   allArtistsToSave = allArtists;
   if (timeout === undefined)
     timeout = setTimeout(() => {
