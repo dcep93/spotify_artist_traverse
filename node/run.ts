@@ -5,6 +5,7 @@ import { MongoClient } from "mongodb";
 
 import { dumpVars } from "./dump";
 import { getToken, tokens } from "./getToken";
+import traverse from "./traverse";
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/";
 
@@ -21,7 +22,7 @@ fs.readFile("./node/secrets.json", (err, raw) =>
       console.log("connected");
       dumpVars.collection = db.db("db").collection("collection");
       console.log("traversing");
-      return Promise.resolve().then(() => {
+      return traverse().then(() => {
         dumpVars.collection = null;
         return db.close();
       });
