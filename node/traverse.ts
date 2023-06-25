@@ -62,7 +62,6 @@ function receiveArtists(
       })
   );
   return Promise.resolve()
-    .then(() => debounceSave(allArtists))
     .then(() =>
       artists.map((id) =>
         runner(() =>
@@ -121,20 +120,4 @@ function receiveArtists(
     )
     .then((ps) => Promise.all(ps))
     .then(() => Promise.resolve(allArtists));
-}
-
-var timeout: ReturnType<typeof setTimeout> | undefined;
-var allArtistsToSave: AllArtistsType | undefined;
-function debounceSave(allArtists: AllArtistsType) {
-  allArtistsToSave = allArtists;
-  if (timeout === undefined)
-    timeout = setTimeout(() => {
-      timeout = undefined;
-      ext({
-        storage: {
-          action: "save",
-          save: { [STORAGE_KEY]: JSON.stringify(allArtistsToSave) },
-        },
-      });
-    }, 1000);
 }
