@@ -53,6 +53,6 @@ new Promise((resolve, reject) =>
   )
   .catch((err) => log(err))
   .then(() => {
-    console.log("done", Date.now() - start);
+    console.log("done", Date.now() - start, tokens.timeout);
     clearTimeout(tokens.timeout);
   });
