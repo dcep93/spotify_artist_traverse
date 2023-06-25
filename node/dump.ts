@@ -2,7 +2,7 @@ export const dumpVars = { collection: null };
 
 export default function dump(json: any) {
   return Promise.resolve()
-    .then(() => json.data.artistUnion)
+    .then(() => json.data?.artistUnion || {})
     .then(
       ({
         relatedContent,
@@ -12,13 +12,16 @@ export default function dump(json: any) {
         sharingInfo,
         saved,
         __typename,
+
+        discography,
         ...data
       }) =>
+        discography &&
         save({
           ...data,
           discography: {
             topTracks: {
-              items: data.discography.topTracks.items.map((item: any) => ({
+              items: discography.topTracks.items.map((item: any) => ({
                 uid: item.uid,
                 track: {
                   ...item.track,
