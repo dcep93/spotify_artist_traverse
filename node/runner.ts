@@ -25,9 +25,11 @@ function getRunner() {
 
 function releaseRunner() {
   const n = queue.pop();
-  console.log("release", Date.now());
+  console.log("release", Date.now() - start);
   setTimeout(n ? n : releaseRunner, SLEEP_MS);
 }
+
+const start = Date.now();
 
 export default function runner<T>(f: () => Promise<T>): Promise<T> {
   return Promise.resolve()
@@ -36,7 +38,7 @@ export default function runner<T>(f: () => Promise<T>): Promise<T> {
       if (cancelled.cancelled) throw new Error(`cancelled`);
       console.log("before");
       const rval = f();
-      console.log("after", Date.now());
+      console.log("after", Date.now() - start);
       return rval;
     })
     .catch((err) => {
