@@ -91,12 +91,12 @@ function receiveArtists(
   allArtists: AllArtistsType,
   writeCache: (allArtists: AllArtistsType) => void
 ): Promise<AllArtistsType> {
-  artists.forEach((artist) => {
-    if (allArtists[artist]) console.log(allArtists[artist]);
-    allArtists[artist] = {
-      state: TraverseState.inFlight,
-    };
-  });
+  artists.forEach(
+    (artist) =>
+      (allArtists[artist] = {
+        state: TraverseState.inFlight,
+      })
+  );
   return Promise.resolve()
     .then(() => debounceSave(allArtists, writeCache))
     .then(() =>

@@ -10,6 +10,8 @@ import traverse from "./traverse";
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/";
 
+const start = Date.now();
+
 new Promise((resolve, reject) =>
   fs.readFile("./node/secrets.json", (err, raw) => {
     if (err) return reject(err);
@@ -51,4 +53,4 @@ new Promise((resolve, reject) =>
   )
   .catch((err) => log(err))
   .then(() => clearTimeout(tokens.timeout))
-  .then(() => log("done"));
+  .then(() => console.log("done", Date.now() - start));
