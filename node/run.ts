@@ -23,6 +23,7 @@ fs.readFile("./node/secrets.json", (err, raw) =>
       dumpVars.collection = db.db("db").collection("collection");
       console.log("traversing");
       traverse().then(() => {
+        console.log("done");
         dumpVars.collection = null;
         db.close();
       });
