@@ -20,7 +20,7 @@ export type StateType = { message?: string; allArtists?: AllArtistsType };
 const f = dump;
 
 export default function traverse() {
-  runner(() =>
+  return runner(() =>
     fetch("https://api.spotify.com/v1/recommendations/available-genre-seeds", {
       headers: {
         Authorization: `Bearer ${tokens.access}`,

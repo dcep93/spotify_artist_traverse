@@ -1,3 +1,5 @@
+export const dumpVars = { collection: null };
+
 export default function dump(json: any) {
   return Promise.resolve()
     .then(() => json.data.artistUnion)
@@ -38,5 +40,9 @@ export default function dump(json: any) {
 }
 
 function save(data: any) {
-  return;
+  return new Promise((resolve, reject) =>
+    dumpVars.collection.insertOne({ ...data, _id: data.id }, (err, res) => {
+      if (err) return reject(err);
+    })
+  );
 }
