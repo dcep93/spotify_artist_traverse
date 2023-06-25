@@ -1,5 +1,3 @@
-import { DuplicateKeyError } from "mongodb";
-
 export const dumpVars = { collection: null };
 
 export default function dump(json: any) {
@@ -45,7 +43,7 @@ function save(data: any) {
   return dumpVars.collection
     .insertOne({ ...data, _id: data.id })
     .catch((err) => {
-      console.log("wtf", err instanceof DuplicateKeyError);
+      console.log("wtf", err, Object.entries(err));
       throw err;
     });
 }
