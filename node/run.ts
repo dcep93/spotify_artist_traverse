@@ -39,7 +39,11 @@ new Promise((resolve, reject) =>
                 })
               )
           )
-          .then(traverse)
+          .then((cache) =>
+            traverse(cache, (allArtists) =>
+              fs.writeFileSync("./cache.json", JSON.stringify(allArtists))
+            )
+          )
           .then(() => console.log("done"))
           .then(() => {
             dumpVars.collection = null;
