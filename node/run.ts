@@ -30,7 +30,7 @@ fs.readFile("./node/secrets.json", (err, raw) =>
               return db.close();
             });
         })
-        .then(() => clearTimeout(tokens.timeout))
         .then(() => console.log("done"))
     )
+    .finally(() => clearTimeout(tokens.timeout))
 );
