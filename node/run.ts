@@ -25,12 +25,12 @@ fs.readFile("./node/secrets.json", (err, raw) =>
           return Promise.resolve(secrets)
             .then(getToken)
             .then(traverse)
+            .then(() => console.log("done"))
             .then(() => {
               dumpVars.collection = null;
               return db.close();
             });
         })
-        .then(() => console.log("done"))
     )
     .catch((err) => console.log(err))
     .then(() => clearTimeout(tokens.timeout))
