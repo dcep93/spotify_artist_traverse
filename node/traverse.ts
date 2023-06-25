@@ -1,7 +1,7 @@
 import dump from "./dump";
 import ext from "./ext";
 import { tokens } from "./getToken";
-import runner, { jsonOrThrow, log } from "./runner";
+import runner, { jsonOrThrow } from "./runner";
 
 const STORAGE_KEY = `spotify_artist_traverse-traverse-v7`;
 
@@ -112,9 +112,6 @@ function receiveArtists(
                         return true;
                       })
                   )
-                  .catch((err) => {
-                    throw new Error(log(err));
-                  })
                   .then((nextArtists) =>
                     receiveArtists(nextArtists, allArtists)
                   )
