@@ -180,6 +180,7 @@ function debounceSave(
 }
 
 function saveHelper(writeCache: (allArtists: AllArtistsType) => void) {
+  writeCache(allArtistsToSave);
   Promise.resolve()
     .then(() =>
       Object.values(TraverseState).filter((s: any) => !isNaN(parseInt(s)))
