@@ -20,6 +20,19 @@ export type StateType = { message?: string; allArtists?: AllArtistsType };
 const f = dump;
 
 export default function traverse() {
+  return getToTraverse()
+    .then(({ artists, allArtists }) =>
+      Promise.resolve()
+        .then(refreshPartnerToken)
+        .then(() => receiveArtists(artists, allArtists))
+    )
+    .then(() => {
+      clearTimeout(timeout);
+      saveHelper();
+    });
+}
+
+function getToTraverse() {
   return runner(() =>
     fetch("https://api.spotify.com/v1/recommendations/available-genre-seeds", {
       headers: {
@@ -55,15 +68,7 @@ export default function traverse() {
     )
     .then((ps) => Promise.all(ps))
     .then((arrs) => arrs.flatMap((arr) => arr))
-    .then((artists) =>
-      Promise.resolve()
-        .then(refreshPartnerToken)
-        .then(() => receiveArtists(artists, {}))
-    )
-    .then(() => {
-      clearTimeout(timeout);
-      saveHelper();
-    });
+    .then((artists) => ({ artists, allArtists: {} }));
 }
 
 function receiveArtists(
@@ -132,12 +137,12 @@ function receiveArtists(
                         nextArtists.length > 0 &&
                         receiveArtists(nextArtists, allArtists)
                     )
+                    .then((x) => {
+                      console.log("c");
+                      return x;
+                    })
                 )
             )
-            .then((x) => {
-              console.log("c");
-              return x;
-            })
         )
       )
     )
