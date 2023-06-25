@@ -47,7 +47,7 @@ export default function traverse() {
             .then(
               (json) =>
                 new Promise<any>((resolve) =>
-                  setTimeout(() => resolve(json), 100)
+                  setTimeout(() => resolve(json), 1000)
                 )
             )
         ).then((json) => (json.artists.items as any[]).map((item) => item.id))
