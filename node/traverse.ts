@@ -28,6 +28,7 @@ export default function traverse() {
     }).then(jsonOrThrow)
   )
     .then((resp) => resp.genres)
+    .then(log)
     .then((genres) =>
       genres.map((genre: string) =>
         runner(() =>
@@ -47,6 +48,7 @@ export default function traverse() {
       )
     )
     .then((ps) => Promise.all(ps))
+    .then(log)
     .then((arrs) => arrs.flatMap((arr) => arr))
     .then((artists) => receiveArtists(artists, {}));
 }
