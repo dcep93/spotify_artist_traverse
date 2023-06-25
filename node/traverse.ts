@@ -1,7 +1,7 @@
 import dump from "./dump";
 import ext from "./ext";
 import { tokens } from "./getToken";
-import runner, { jsonOrThrow } from "./runner";
+import runner, { jsonOrThrow, log } from "./runner";
 
 const STORAGE_KEY = `spotify_artist_traverse-traverse-v7`;
 
@@ -62,6 +62,7 @@ function receiveArtists(
       })
   );
   return Promise.resolve()
+    .then(() => debounceSave(allArtists))
     .then(() =>
       artists.map((id) =>
         runner(() =>
@@ -120,4 +121,27 @@ function receiveArtists(
     )
     .then((ps) => Promise.all(ps))
     .then(() => Promise.resolve(allArtists));
+}
+
+var timeout: ReturnType<typeof setTimeout> | undefined;
+var allArtistsToSave: AllArtistsType | undefined;
+function debounceSave(allArtists: AllArtistsType) {
+  allArtistsToSave = allArtists;
+  if (timeout === undefined)
+    timeout = setTimeout(() => {
+      timeout = undefined;
+      Promise.resolve()
+        .then(() =>
+          Object.values(TraverseState).filter((s: any) => !isNaN(parseInt(s)))
+        )
+        .then((states) =>
+          states.map((state) => [
+            TraverseState[state],
+            Object.values(allArtistsToSave).filter((o) => o.state === state)
+              .length,
+          ])
+        )
+        .then(Object.fromEntries)
+        .then(log);
+    }, 1000);
 }

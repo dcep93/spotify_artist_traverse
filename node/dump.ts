@@ -38,5 +38,6 @@ export default function dump(json: any) {
 }
 
 function save(data: any) {
+  return;
   console.log(JSON.stringify(data).length, data);
 }
