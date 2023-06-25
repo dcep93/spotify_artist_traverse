@@ -22,7 +22,8 @@ fs.readFile("./node/secrets.json", (err, raw) =>
           console.log("connected");
           dumpVars.collection = db.db("db").collection("collection");
           console.log("traversing");
-          return getToken(secrets)
+          return Promise.resolve(secrets)
+            .then(getToken)
             .then(traverse)
             .then(() => {
               dumpVars.collection = null;
