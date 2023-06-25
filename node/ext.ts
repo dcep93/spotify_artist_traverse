@@ -1,5 +1,4 @@
 export default function ext(data: any): Promise<any> {
-  console.log("a");
   return new Promise((resolve, reject) =>
     fetch(data.fetch.url, data.fetch.options)
       .then((resp: any) =>
@@ -14,8 +13,5 @@ export default function ext(data: any): Promise<any> {
             }))
       )
       .then(resolve)
-  ).then((x) => {
-    console.log("b");
-    return x;
-  });
+  );
 }

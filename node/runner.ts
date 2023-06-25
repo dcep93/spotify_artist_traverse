@@ -1,5 +1,3 @@
-import { dumpVars } from "./dump";
-
 const MAX_RUNNERS = 8;
 const SLEEP_MS = 10;
 
@@ -27,7 +25,7 @@ function getRunner() {
 
 function releaseRunner() {
   const n = queue.pop();
-  dumpVars.collection && setTimeout(n ? n : releaseRunner, SLEEP_MS);
+  setTimeout(n ? n : releaseRunner, SLEEP_MS);
 }
 
 export default function runner<T>(f: () => Promise<T>): Promise<T> {
