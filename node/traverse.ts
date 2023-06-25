@@ -57,28 +57,27 @@ function getToTraverse() {
   )
     .then((resp) => resp.genres)
     .then((genres) =>
-      genres.map((genre: string) =>
+      genres.map((genre, i) =>
         runner(() =>
-          fetch(
-            `https://api.spotify.com/v1/search?${new URLSearchParams({
-              q: encodeURI(genre),
-              type: "artist",
-              limit: "50",
-            })}`,
-            {
-              headers: {
-                Authorization: `Bearer ${tokens.access}`,
-              },
-            }
-          )
-            .then(jsonOrThrow)
-            .then(
-              (json) =>
-                new Promise<any>((resolve) =>
-                  setTimeout(() => resolve(json), 1000)
-                )
+          new Promise((resolve) => setTimeout(resolve, i * 100))
+            .then(() =>
+              fetch(
+                `https://api.spotify.com/v1/search?${new URLSearchParams({
+                  q: encodeURI(genre),
+                  type: "artist",
+                  limit: "50",
+                })}`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${tokens.access}`,
+                  },
+                }
+              ).then(jsonOrThrow)
             )
-        ).then((json) => (json.artists.items as any[]).map((item) => item.id))
+            .then((json) =>
+              (json.artists.items as any[]).map((item) => item.id)
+            )
+        )
       )
     )
     .then((ps) => Promise.all(ps))
