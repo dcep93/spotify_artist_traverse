@@ -31,6 +31,7 @@ export default function dump(json: any) {
             },
           },
         })
+          .then(save)
           .then(() => ({
             value: profile.name,
             rank: ((discography?.topTracks.items || []) as any[])
