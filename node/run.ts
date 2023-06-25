@@ -31,7 +31,7 @@ new Promise((resolve, reject) =>
           .then(
             () =>
               new Promise((resolve) =>
-                fs.readFile("./cache.x.json", (err, raw) => {
+                fs.readFile("./cache.json", (err, raw) => {
                   if (err) return resolve(undefined);
                   Promise.resolve()
                     .then(() => raw.toString())
