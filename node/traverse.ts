@@ -143,19 +143,11 @@ function receiveArtists(
                         .map(({ id }: { id: string }) => id)
                         .filter((id) => !allArtists[id]?.value)
                     )
-                    .then((x) => {
-                      console.log("b");
-                      return x;
-                    })
                     .then(
                       (nextArtists) =>
                         nextArtists.length > 0 &&
                         receiveArtists(nextArtists, allArtists, writeCache)
                     )
-                    .then((x) => {
-                      console.log("c");
-                      return x;
-                    })
                 )
             )
         )
