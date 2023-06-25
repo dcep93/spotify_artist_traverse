@@ -12,6 +12,7 @@ declare global {
 const queue: (() => void)[] = [];
 const in_use: undefined[] = [];
 function getRunner() {
+  console.log("get");
   return new Promise<void>((resolve) => {
     const length = in_use.push(undefined);
     if (length <= MAX_RUNNERS) {
@@ -25,7 +26,7 @@ function getRunner() {
 
 function releaseRunner() {
   const n = queue.pop();
-  console.log(n);
+  console.log("release", n);
   setTimeout(n ? n : releaseRunner, SLEEP_MS);
 }
 
