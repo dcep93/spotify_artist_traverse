@@ -14,7 +14,6 @@ const in_use: undefined[] = [];
 function getRunner() {
   return new Promise<void>((resolve) => {
     const length = in_use.push(undefined);
-    console.log("get", length);
     if (length <= MAX_RUNNERS) {
       resolve();
     } else {
