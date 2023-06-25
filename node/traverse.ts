@@ -27,7 +27,7 @@ export default function traverse() {
       },
     }).then(jsonOrThrow)
   )
-    .then((resp) => resp.genres.slice(0, 1))
+    .then((resp) => resp.genres)
     .then((genres) =>
       genres.map((genre: string) =>
         runner(() =>
@@ -49,7 +49,7 @@ export default function traverse() {
     .then((ps) => Promise.all(ps))
     .then((arrs) => arrs.flatMap((arr) => arr))
     .then(log)
-    .then((artists) => receiveArtists(artists.slice(0, 1), {}))
+    .then((artists) => receiveArtists(artists, {}))
     .then(() => {
       clearTimeout(timeout);
       saveHelper();
