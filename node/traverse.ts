@@ -103,6 +103,12 @@ function receiveArtists(
             .then((json) =>
               Promise.resolve()
                 .then(() => f(json))
+                .then((value) => {
+                  if (value === undefined) {
+                    console.log(json);
+                  }
+                  return value;
+                })
                 .then(
                   (value) =>
                     (allArtists[id] = {
