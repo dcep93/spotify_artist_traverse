@@ -144,7 +144,7 @@ function receiveArtists(
                         .filter((id) => !allArtists[id]?.value)
                     )
                     .then((x) => {
-                      // console.log("b");
+                      console.log("b");
                       return x;
                     })
                     .then(
@@ -153,7 +153,7 @@ function receiveArtists(
                         receiveArtists(nextArtists, allArtists, writeCache)
                     )
                     .then((x) => {
-                      // console.log("c");
+                      console.log("c");
                       return x;
                     })
                 )

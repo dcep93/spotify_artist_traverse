@@ -40,11 +40,9 @@ new Promise((resolve, reject) =>
               )
           )
           .then((cache) =>
-            traverse(cache, (allArtists) => {
-              console.log("writing");
-              fs.writeFileSync("./cache.json", JSON.stringify(allArtists));
-              console.log("wrote");
-            })
+            traverse(cache, (allArtists) =>
+              fs.writeFileSync("./cache.json", JSON.stringify(allArtists))
+            )
           )
           .then(() => console.log("done"))
           .then(() => {
