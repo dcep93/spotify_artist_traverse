@@ -55,8 +55,11 @@ export default function traverse() {
     )
     .then((ps) => Promise.all(ps))
     .then((arrs) => arrs.flatMap((arr) => arr))
-    .then(refreshPartnerToken)
-    .then((artists) => receiveArtists(artists, {}))
+    .then((artists) =>
+      Promise.resolve()
+        .then(refreshPartnerToken)
+        .then(() => receiveArtists(artists, {}))
+    )
     .then(() => {
       clearTimeout(timeout);
       saveHelper();
