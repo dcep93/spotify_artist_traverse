@@ -102,6 +102,7 @@ function receiveArtists(
               .then((value) => {
                 if (value === undefined) {
                   console.log(json);
+                  console.log(id);
                 }
                 return value;
               })
