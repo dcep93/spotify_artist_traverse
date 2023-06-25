@@ -32,5 +32,6 @@ fs.readFile("./node/secrets.json", (err, raw) =>
         })
         .then(() => console.log("done"))
     )
+    .catch((err) => console.log(err))
     .finally(() => clearTimeout(tokens.timeout))
 );
