@@ -15,18 +15,21 @@ fs.readFile("./node/secrets.json", (err, raw) =>
     resolve(raw.toString());
   })
     .then(JSON.parse)
-    .then(getToken)
-    .then(() => console.log("connecting"))
-    .then(() => MongoClient.connect(MONGO_URL))
-    .then((db) => {
-      console.log("connected");
-      dumpVars.collection = db.db("db").collection("collection");
-      console.log("traversing");
-      return traverse().then(() => {
-        dumpVars.collection = null;
-        return db.close();
-      });
-    })
-    .then(() => clearTimeout(tokens.timeout))
-    .then(() => console.log("done"))
+    .then((secrets) =>
+      Promise.resolve()
+        .then(() => MongoClient.connect(MONGO_URL))
+        .then((db) => {
+          console.log("connected");
+          dumpVars.collection = db.db("db").collection("collection");
+          console.log("traversing");
+          return getToken(secrets)
+            .then(traverse)
+            .then(() => {
+              dumpVars.collection = null;
+              return db.close();
+            });
+        })
+        .then(() => clearTimeout(tokens.timeout))
+        .then(() => console.log("done"))
+    )
 );
