@@ -41,6 +41,7 @@ new Promise((resolve, reject) =>
           )
           .then((cache) =>
             traverse(cache, (allArtists) => {
+              console.log("writing");
               fs.writeFileSync("./cache.json", JSON.stringify(allArtists));
               console.log("wrote");
             })
