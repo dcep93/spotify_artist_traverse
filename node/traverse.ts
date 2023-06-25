@@ -131,35 +131,37 @@ function receiveArtists(
             .catch((err) => {
               if (++errs > 1000) throw err;
             })
-            .then((json) =>
-              Promise.resolve()
-                .then(() => f(json))
-                .then(
-                  (value) =>
-                    (allArtists[id] = {
-                      state:
-                        value === undefined
-                          ? TraverseState.miss
-                          : TraverseState.hit,
-                      value,
-                    })
-                )
-                .then(() =>
-                  Promise.resolve()
-                    .then(() =>
-                      (
-                        json.data?.artistUnion.relatedContent.relatedArtists
-                          .items || []
+            .then(
+              (json) =>
+                json &&
+                Promise.resolve()
+                  .then(() => f(json))
+                  .then(
+                    (value) =>
+                      (allArtists[id] = {
+                        state:
+                          value === undefined
+                            ? TraverseState.miss
+                            : TraverseState.hit,
+                        value,
+                      })
+                  )
+                  .then(() =>
+                    Promise.resolve()
+                      .then(() =>
+                        (
+                          json.data?.artistUnion.relatedContent.relatedArtists
+                            .items || []
+                        )
+                          .map(({ id }: { id: string }) => id)
+                          .filter((id) => !allArtists[id])
                       )
-                        .map(({ id }: { id: string }) => id)
-                        .filter((id) => !allArtists[id])
-                    )
-                    .then(
-                      (nextArtists) =>
-                        nextArtists.length > 0 &&
-                        receiveArtists(nextArtists, allArtists, writeCache)
-                    )
-                )
+                      .then(
+                        (nextArtists) =>
+                          nextArtists.length > 0 &&
+                          receiveArtists(nextArtists, allArtists, writeCache)
+                      )
+                  )
             )
         )
       )
