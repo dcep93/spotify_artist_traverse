@@ -16,12 +16,11 @@ export default function dump(json: any) {
         discography,
         ...data
       }) =>
-        discography &&
         save({
           ...data,
           discography: {
             topTracks: {
-              items: discography.topTracks.items.map((item: any) => ({
+              items: (discography?.topTracks.items || []).map((item: any) => ({
                 uid: item.uid,
                 track: {
                   ...item.track,
