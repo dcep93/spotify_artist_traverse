@@ -35,7 +35,10 @@ export default function runner<T>(f: () => Promise<T>): Promise<T> {
     .then(getRunner)
     .then(() => {
       if (cancelled.cancelled) throw new Error(`cancelled`);
-      return f();
+      console.log("before");
+      const rval = f();
+      console.log("after");
+      return rval;
     })
     .catch((err) => {
       log(`cancelling`);
