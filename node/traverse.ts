@@ -126,11 +126,11 @@ function receiveArtists(
                         json.data?.artistUnion.relatedContent.relatedArtists
                           .items ||
                         []
-                          .map(({ id }: { id: string }) => log(id))
+                          .map(({ id }: { id: string }) => id)
                           .filter((id) => !allArtists[id]?.value)
                     )
                     .then((nextArtists) =>
-                      receiveArtists(nextArtists, allArtists)
+                      receiveArtists(log(nextArtists), allArtists)
                     )
                 )
             )
