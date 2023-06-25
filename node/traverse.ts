@@ -40,11 +40,7 @@ export default function traverse(
         .then(refreshPartnerToken)
         .then(() => receiveArtists(artists, allArtists, writeCache))
     )
-    .catch((err) => {
-      console.log("wut1");
-      throw err;
-    })
-    .then(() => {
+    .finally(() => {
       clearTimeout(timeout);
       saveHelper(writeCache);
     });
