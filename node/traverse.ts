@@ -42,7 +42,14 @@ export default function traverse() {
                 Authorization: `Bearer ${tokens.access}`,
               },
             }
-          ).then(jsonOrThrow)
+          )
+            .then(jsonOrThrow)
+            .then(
+              (json) =>
+                new Promise<any>((resolve) =>
+                  setTimeout(() => resolve(json), 100)
+                )
+            )
         ).then((json) => (json.artists.items as any[]).map((item) => item.id))
       )
     )
