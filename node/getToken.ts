@@ -1,7 +1,7 @@
 import ext from "./ext";
 import { jsonOrThrow, log } from "./runner";
 
-const REFRESH_PARTNER_TOKEN_MS = 60 * 1000;
+const REFRESH_PARTNER_TOKEN_MS = 5 * 1000;
 
 export const tokens = {
   partner: "",
