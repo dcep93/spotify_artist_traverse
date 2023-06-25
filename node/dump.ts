@@ -1,7 +1,6 @@
 export const dumpVars = { collection: null };
 
 export default function dump(json: any) {
-  if (json.errors) throw new Error(JSON.stringify(json.errors));
   return Promise.resolve()
     .then(() => json.data.artistUnion)
     .then(
