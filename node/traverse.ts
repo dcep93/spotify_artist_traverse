@@ -41,7 +41,6 @@ export default function traverse(
         .then(() => receiveArtists(artists, allArtists, writeCache))
     )
     .finally(() => {
-      console.log("ending traverse");
       clearTimeout(timeout);
       saveHelper(writeCache);
     });
