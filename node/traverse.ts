@@ -64,7 +64,6 @@ function receiveArtists(
       })
   );
   return Promise.resolve()
-    .then(() => debounceSave(allArtists))
     .then(() =>
       artists.map((id) =>
         runner(() =>
@@ -116,6 +115,7 @@ function receiveArtists(
       )
     )
     .then((ps) => Promise.all(ps))
+    .then(() => debounceSave(allArtists))
     .then(() => Promise.resolve(allArtists));
 }
 
