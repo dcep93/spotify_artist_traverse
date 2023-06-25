@@ -1,8 +1,9 @@
 export const dumpVars = { collection: null };
 
 export default function dump(json: any) {
+  if (json.errors) throw new Error(JSON.stringify(json.errors));
   return Promise.resolve()
-    .then(() => json.data?.artistUnion || {})
+    .then(() => json.data.artistUnion)
     .then(
       ({
         relatedContent,
@@ -16,7 +17,6 @@ export default function dump(json: any) {
         discography,
         ...data
       }) => {
-        if (!profile) console.log("noprofile", json);
         return save({
           ...data,
           discography: {
@@ -34,7 +34,7 @@ export default function dump(json: any) {
         })
           .then(() => ({
             value: profile.name,
-            rank: (discography.topTracks.items as any[])
+            rank: (discography?.topTracks.items || ([] as any[]))
               .map((item) => parseInt(item.track.playcount))
               .reduce((a, b) => a + b, 0),
           }))
