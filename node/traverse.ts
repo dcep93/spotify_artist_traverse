@@ -19,16 +19,30 @@ export type StateType = { message?: string; allArtists?: AllArtistsType };
 
 const f = dump;
 
-export default function traverse() {
-  return getToTraverse()
+export default function traverse(
+  cache: any,
+  writeCache: (allArtists: AllArtistsType) => void
+) {
+  return (
+    cache
+      ? Promise.resolve(cache).then((allArtists) => ({
+          artists: Object.entries(allArtists)
+            .filter(
+              ([key, val]) => (val as any).state === TraverseState.inFlight
+            )
+            .map(([key, val]) => key),
+          allArtists,
+        }))
+      : getToTraverse()
+  )
     .then(({ artists, allArtists }) =>
       Promise.resolve()
         .then(refreshPartnerToken)
-        .then(() => receiveArtists(artists, allArtists))
+        .then(() => receiveArtists(artists, allArtists, writeCache))
     )
     .then(() => {
       clearTimeout(timeout);
-      saveHelper();
+      saveHelper(writeCache);
     });
 }
 
@@ -73,7 +87,8 @@ function getToTraverse() {
 
 function receiveArtists(
   artists: string[],
-  allArtists: AllArtistsType
+  allArtists: AllArtistsType,
+  writeCache: (allArtists: AllArtistsType) => void
 ): Promise<AllArtistsType> {
   artists.forEach(
     (artist) =>
@@ -82,7 +97,7 @@ function receiveArtists(
       })
   );
   return Promise.resolve()
-    .then(() => debounceSave(allArtists))
+    .then(() => debounceSave(allArtists, writeCache))
     .then(() =>
       artists.map((id) =>
         runner(() =>
@@ -135,7 +150,7 @@ function receiveArtists(
                     .then(
                       (nextArtists) =>
                         nextArtists.length > 0 &&
-                        receiveArtists(nextArtists, allArtists)
+                        receiveArtists(nextArtists, allArtists, writeCache)
                     )
                     .then((x) => {
                       console.log("c");
@@ -147,22 +162,24 @@ function receiveArtists(
       )
     )
     .then((ps) => Promise.all(ps))
-    .then(() => debounceSave(allArtists))
     .then(() => Promise.resolve(allArtists));
 }
 
 var timeout: ReturnType<typeof setTimeout> | undefined;
 var allArtistsToSave: AllArtistsType | undefined;
-function debounceSave(allArtists: AllArtistsType) {
+function debounceSave(
+  allArtists: AllArtistsType,
+  writeCache: (allArtists: AllArtistsType) => void
+) {
   allArtistsToSave = allArtists;
   if (timeout === undefined)
     timeout = setTimeout(() => {
       timeout = undefined;
-      saveHelper();
+      saveHelper(writeCache);
     }, 1000);
 }
 
-function saveHelper() {
+function saveHelper(writeCache: (allArtists: AllArtistsType) => void) {
   Promise.resolve()
     .then(() =>
       Object.values(TraverseState).filter((s: any) => !isNaN(parseInt(s)))
