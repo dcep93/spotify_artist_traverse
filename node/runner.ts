@@ -49,7 +49,7 @@ export function jsonOrThrow(resp: Response) {
   return resp.ok
     ? resp.json()
     : resp.text().then((text) => {
-        throw new Error(`fetch ${text}`);
+        throw new Error(`${resp.url} ${text}`);
       });
 }
 
