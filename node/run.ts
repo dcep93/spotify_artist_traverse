@@ -45,7 +45,7 @@ new Promise((resolve, reject) =>
             )
           )
           .then(() => console.log("success"))
-          .then(() => {
+          .finally(() => {
             dumpVars.collection = null;
             return db.close();
           });
