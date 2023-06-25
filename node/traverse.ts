@@ -39,11 +39,11 @@ export default function traverse(
       Promise.resolve()
         .then(refreshPartnerToken)
         .then(() => receiveArtists(artists, allArtists, writeCache))
-        .catch((err) => {
-          console.log("wut");
-          throw err;
-        })
     )
+    .catch((err) => {
+      console.log("wut1");
+      throw err;
+    })
     .then(() => {
       clearTimeout(timeout);
       saveHelper(writeCache);
