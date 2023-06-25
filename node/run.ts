@@ -1,3 +1,4 @@
+// @ts-ignore
 import * as fs from "fs";
 
 import { getToken } from "./getToken";
