@@ -103,12 +103,6 @@ function receiveArtists(
             .then((json) =>
               Promise.resolve()
                 .then(() => f(json))
-                .then((value) => {
-                  // if (value === undefined) {
-                  //   console.log(json);
-                  // }
-                  return value;
-                })
                 .then(
                   (value) =>
                     (allArtists[id] = {
@@ -130,7 +124,7 @@ function receiveArtists(
                         .filter((id) => !allArtists[id]?.value)
                     )
                     .then((nextArtists) =>
-                      receiveArtists(log(nextArtists), allArtists)
+                      receiveArtists(nextArtists, allArtists)
                     )
                 )
             )
