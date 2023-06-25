@@ -9,8 +9,8 @@ sudo systemctl start mongod
 curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 sudo apt-get install -y nodejs
 sudo apt-get install -y git npm
-sudo npm install -g ts-node mongodb
-sudo npm i --save-dev @types/node
+sudo npm install -g ts-node mongodb @types/node
 git clone https://github.com/dcep93/spotify_artist_traverse.git
 cd spotify_artist_traverse
+vim node/secrets.json
 ts-node node/run.ts
