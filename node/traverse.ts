@@ -104,9 +104,9 @@ function receiveArtists(
               Promise.resolve()
                 .then(() => f(json))
                 .then((value) => {
-                  if (value === undefined) {
-                    console.log(json);
-                  }
+                  // if (value === undefined) {
+                  //   console.log(json);
+                  // }
                   return value;
                 })
                 .then(
