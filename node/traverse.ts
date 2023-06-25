@@ -124,6 +124,11 @@ function receiveArtists(
             .then((json) =>
               Promise.resolve()
                 .then(() => f(json))
+                .then((value) => {
+                  if (allArtists[id]?.state !== TraverseState.inFlight)
+                    console.log(json);
+                  return value;
+                })
                 .then(
                   (value) =>
                     (allArtists[id] = {
