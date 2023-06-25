@@ -43,7 +43,9 @@ export default function traverse() {
                 Authorization: `Bearer ${tokens.access}`,
               },
             }
-          ).then(jsonOrThrow)
+          )
+            .then(jsonOrThrow)
+            .then(log)
         ).then((json) => (json.artists.items as any[]).map((item) => item.id))
       )
     )
