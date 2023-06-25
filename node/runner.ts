@@ -25,20 +25,16 @@ function getRunner() {
 
 function releaseRunner() {
   const n = queue.pop();
-  console.log("release", Date.now() - start);
   setTimeout(n ? n : releaseRunner, SLEEP_MS);
 }
-
-const start = Date.now();
 
 export default function runner<T>(f: () => Promise<T>): Promise<T> {
   return Promise.resolve()
     .then(getRunner)
     .then(() => {
       if (cancelled.cancelled) throw new Error(`cancelled`);
-      console.log("before");
       const rval = f();
-      console.log("after", Date.now() - start);
+      console.log("a");
       return rval;
     })
     .catch((err) => {
@@ -46,7 +42,10 @@ export default function runner<T>(f: () => Promise<T>): Promise<T> {
       cancelled.cancelled = true;
       throw err;
     })
-    .finally(releaseRunner);
+    .finally(() => {
+      log("b");
+      releaseRunner();
+    });
 }
 
 export function jsonOrThrow(resp: Response) {
