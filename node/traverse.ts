@@ -94,43 +94,36 @@ function receiveArtists(
               json: true,
             },
           })
+            .then((resp) => resp.msg)
+            .then((json) =>
+              Promise.resolve()
+                .then(() => f(json))
+                .then(
+                  (value) =>
+                    (allArtists[id] = {
+                      state:
+                        value === undefined
+                          ? TraverseState.miss
+                          : TraverseState.hit,
+                      value,
+                    })
+                )
+                .then(() =>
+                  Promise.resolve()
+                    .then(
+                      () =>
+                        json.data?.artistUnion.relatedContent.relatedArtists
+                          .items ||
+                        []
+                          .map(({ id }: { id: string }) => id)
+                          .filter((id) => allArtists[id]?.value)
+                    )
+                    .then((nextArtists) =>
+                      receiveArtists(nextArtists, allArtists)
+                    )
+                )
+            )
         )
-          .then((resp) => resp.msg)
-          .then((json) =>
-            Promise.resolve()
-              .then(() => f(json))
-              .then((value) => {
-                if (value === undefined) {
-                  console.log(json);
-                  console.log(id);
-                }
-                return value;
-              })
-              .then(
-                (value) =>
-                  (allArtists[id] = {
-                    state:
-                      value === undefined
-                        ? TraverseState.miss
-                        : TraverseState.hit,
-                    value,
-                  })
-              )
-              .then(() =>
-                Promise.resolve()
-                  .then(
-                    () =>
-                      json.data?.artistUnion.relatedContent.relatedArtists
-                        .items ||
-                      []
-                        .map(({ id }: { id: string }) => id)
-                        .filter((id) => allArtists[id]?.value)
-                  )
-                  .then((nextArtists) =>
-                    receiveArtists(nextArtists, allArtists)
-                  )
-              )
-          )
       )
     )
     .then((ps) => Promise.all(ps))
