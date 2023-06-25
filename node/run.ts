@@ -55,9 +55,6 @@ new Promise((resolve, reject) =>
         throw err;
       })
   )
-  .catch((err) => {
-    console.log("wut2");
-    throw err;
-  })
-  .catch((err) => console.log(err))
-  .then(() => clearTimeout(tokens.timeout));
+  .catch((err) => console.log("wut3", err))
+  .then(() => clearTimeout(tokens.timeout))
+  .then(() => console.log("exiting"));
