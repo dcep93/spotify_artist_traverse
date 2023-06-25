@@ -142,7 +142,7 @@ function receiveArtists(
                           .items || []
                       )
                         .map(({ id }: { id: string }) => id)
-                        .filter((id) => !allArtists[id]?.value)
+                        .filter((id) => !allArtists[id])
                     )
                     .then(
                       (nextArtists) =>
