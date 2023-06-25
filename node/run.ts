@@ -52,5 +52,7 @@ new Promise((resolve, reject) =>
       })
   )
   .catch((err) => log(err))
-  .then(() => clearTimeout(tokens.timeout))
-  .then(() => console.log("done", Date.now() - start));
+  .then(() => {
+    console.log("done", Date.now() - start);
+    clearTimeout(tokens.timeout);
+  });
