@@ -45,15 +45,7 @@ export default function traverse() {
           ).then(jsonOrThrow)
         ).then((json) => (json.artists.items as any[]).map((item) => item.id))
       )
-    )
-    .then((ps) => Promise.all(ps))
-    .then((arrs) => arrs.flatMap((arr) => arr))
-    .then(log)
-    .then((artists) => receiveArtists(artists.slice(0, 1), {}))
-    .then(() => {
-      clearTimeout(timeout);
-      saveHelper();
-    });
+    );
 }
 
 function receiveArtists(
