@@ -6,7 +6,7 @@ import { TraverseState } from "./traverse";
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/";
 
-const COUNT_PRINT_FREQ = 10000;
+const SEEN_PRINT_FREQ = 10000;
 const MIN_TOP_PLAYS = 10000000;
 const MIN_RATIO = 10;
 
@@ -23,16 +23,20 @@ function getOneHitWonder(document) {
     tracks[0].playcount > MIN_TOP_PLAYS &&
     tracks[0].playcount / tracks[1].playcount > MIN_RATIO
     ? {
-        artist: document.profile.name,
-        playcount: tracks[0].playcount,
-        track: tracks[0].track,
-        ratio: tracks[0].playcount / tracks[1].playcount,
+        rank: tracks[0].playcount,
+        value: {
+          artist: document.profile.name,
+          playcount: tracks[0].playcount,
+          track: tracks[0].track,
+          ratio: tracks[0].playcount / tracks[1].playcount,
+        },
       }
     : undefined;
 }
 
 function oneHitWonder(collection, cache) {
-  var count = 0;
+  var seen = 0;
+  const found = [];
   return Promise.resolve()
     .then(() =>
       Object.values(TraverseState).filter((s: any) => !isNaN(parseInt(s)))
@@ -47,11 +51,16 @@ function oneHitWonder(collection, cache) {
     .then(console.log)
     .then(() =>
       collection.find().forEach((document) => {
-        if (++count % COUNT_PRINT_FREQ === 0)
-          console.log(count, Date.now() - START);
+        if (++seen % SEEN_PRINT_FREQ === 0)
+          console.log(seen, Date.now() - START);
         const data = getOneHitWonder(document);
-        if (data !== undefined) console.log(data);
+        if (data !== undefined) found.push(data);
       })
+    )
+    .then(() =>
+      found
+        .sort((a, b) => a.rank - b.rank)
+        .forEach((obj) => console.log(obj.value))
     );
 }
 
