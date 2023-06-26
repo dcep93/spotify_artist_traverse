@@ -31,6 +31,9 @@ export function getToken(args: { refreshToken: string; bearer: string }) {
 }
 
 export function refreshPartnerToken() {
+  tokens.partner =
+    "BQBe-zrXN_go3qzlSQBgAIanLenSjShDelJxpI-VXvtf_sS9PONfGTVxS1HUzUuZvyGSonr4POExANgdXR2k4nvWJZtGiJQVKZZpyKwyOTv2wo6Els8";
+  return;
   return ext({ fetch: { url: `https://open.spotify.com`, noCache: true } })
     .then((resp: any) => resp.msg as string)
     .then((text) =>
