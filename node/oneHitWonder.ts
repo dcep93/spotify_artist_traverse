@@ -6,7 +6,7 @@ import { TraverseState } from "./traverse";
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/";
 
-const SEEN_PRINT_FREQ = 10000;
+const SEEN_PRINT_FREQ = 100000;
 const MIN_TOP_PLAYS = 10000000;
 const MIN_RATIO = 10;
 
@@ -58,11 +58,12 @@ function oneHitWonder(collection, cache) {
         if (data !== undefined) found.push(data);
       })
     )
-    .then(() =>
+    .then(() => {
       found
         .sort((a, b) => a.rank - b.rank)
-        .forEach((obj) => console.log(obj.value))
-    );
+        .forEach((obj) => console.log(obj.value));
+      console.log(Object.keys(found).length);
+    });
 }
 
 new Promise(
