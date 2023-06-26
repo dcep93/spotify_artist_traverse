@@ -52,7 +52,7 @@ function oneHitWonder(collection, cache) {
     .then(() =>
       collection.find().forEach((document) => {
         if (++seen % SEEN_PRINT_FREQ === 0)
-          console.log(seen, Date.now() - START);
+          console.log({ seen, time: Date.now() - START });
         const data = getOneHitWonder(document);
         if (data !== undefined) found.push(data);
       })
