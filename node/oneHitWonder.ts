@@ -21,9 +21,9 @@ function oneHitWonder(collection, cache) {
     .then(Object.fromEntries)
     .then(console.log)
     .then(() =>
-      collection.forEach(
-        (document) => cache[document.id] || console.log(document.profile)
-      )
+      collection
+        .find((document) => !cache[document.id])
+        .forEach((document) => console.log(document.profile))
     );
 }
 
