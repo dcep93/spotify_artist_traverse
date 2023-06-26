@@ -1,5 +1,4 @@
 // @ts-ignore
-import * as fs from "fs";
 // @ts-ignore
 import { MongoClient } from "mongodb";
 
@@ -11,8 +10,8 @@ const COUNT_PRINT_FREQ = 10000;
 
 const START = Date.now();
 
-function isOneHitWonder(document) {
-  return true;
+function getOneHitWonder(document) {
+  return document;
 }
 
 function oneHitWonder(collection, cache) {
@@ -34,19 +33,21 @@ function oneHitWonder(collection, cache) {
         if (++count % COUNT_PRINT_FREQ === 0)
           console.log(count, Date.now() - START);
         if (count > 100) throw new Error("gotem");
-        if (isOneHitWonder(document)) console.log(document.profile);
+        const data = getOneHitWonder(document);
+        if (data) console.log(data);
       })
     );
 }
 
-new Promise((resolve) =>
-  fs.readFile("./cache.json", (err, raw) => {
-    if (err) return resolve(undefined);
-    Promise.resolve()
-      .then(() => raw.toString())
-      .then(JSON.parse)
-      .then(resolve);
-  })
+new Promise(
+  (resolve) => resolve({})
+  //   fs.readFile("./cache.json", (err, raw) => {
+  //     if (err) return resolve(undefined);
+  //     Promise.resolve()
+  //       .then(() => raw.toString())
+  //       .then(JSON.parse)
+  //       .then(resolve);
+  //   })
 ).then((cache) =>
   Promise.resolve()
     .then(() => MongoClient.connect(MONGO_URL))
