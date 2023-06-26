@@ -39,7 +39,6 @@ export default function traverse(
         .then(() => receiveArtists(artists, allArtists, writeCache))
     )
     .finally(() => {
-      console.log({ errs });
       clearTimeout(timeout);
       saveHelper(writeCache);
     });
@@ -82,8 +81,6 @@ function getToTraverse() {
     .then((arrs) => arrs.flatMap((arr) => arr))
     .then((artists) => ({ artists, allArtists: {} }));
 }
-
-var errs = 0;
 
 function receiveArtists(
   artists: string[],
