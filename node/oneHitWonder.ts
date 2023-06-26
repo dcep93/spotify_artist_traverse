@@ -35,7 +35,6 @@ function oneHitWonder(collection, cache) {
           console.log(count, Date.now() - START);
         //
         if ((document) => cache[document.id]) return;
-        if (count > 100) return;
         //
         if (isOneHitWonder(document)) console.log(document.profile);
       })
