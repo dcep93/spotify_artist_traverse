@@ -23,7 +23,7 @@ function oneHitWonder(collection, cache) {
     .then(console.log)
     .then(() =>
       collection.find().forEach((document) => {
-        count++;
+        if (count++ % 10000 === 0) console.log(count);
         if ((document) => cache[document.id]) return;
         if (count > 100) return;
         console.log(document.profile);
