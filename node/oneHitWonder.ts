@@ -9,6 +9,8 @@ const MONGO_URL = "mongodb://127.0.0.1:27017/";
 
 const COUNT_PRINT_FREQ = 10000;
 
+const START = Date.now();
+
 function isOneHitWonder(document) {
   return true;
 }
@@ -29,7 +31,8 @@ function oneHitWonder(collection, cache) {
     .then(console.log)
     .then(() =>
       collection.find().forEach((document) => {
-        if (count++ % COUNT_PRINT_FREQ === 0) console.log(count);
+        if (++count % COUNT_PRINT_FREQ === 0)
+          console.log(count, Date.now() - START);
         //
         if ((document) => cache[document.id]) return;
         if (count > 100) return;
