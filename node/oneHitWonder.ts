@@ -8,6 +8,7 @@ import { TraverseState } from "./traverse";
 const MONGO_URL = "mongodb://127.0.0.1:27017/";
 
 function oneHitWonder(collection, cache) {
+  var count = 0;
   Promise.resolve()
     .then(() =>
       Object.values(TraverseState).filter((s: any) => !isNaN(parseInt(s)))
@@ -21,10 +22,14 @@ function oneHitWonder(collection, cache) {
     .then(Object.fromEntries)
     .then(console.log)
     .then(() =>
-      collection
-        .find((document) => !cache[document.id])
-        .forEach((document) => console.log(document.profile))
-    );
+      collection.find().forEach((document) => {
+        count++;
+        if ((document) => cache[document.id]) return;
+        if (count > 100) return;
+        console.log(document.profile);
+      })
+    )
+    .then(() => console.log(count, Object.keys(cache).length));
 }
 
 new Promise((resolve) =>
