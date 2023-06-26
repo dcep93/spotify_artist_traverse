@@ -7,7 +7,6 @@ export default function dump(json: any) {
       ({
         relatedContent,
         goods,
-        profile,
         visuals,
         sharingInfo,
         saved,
@@ -33,7 +32,7 @@ export default function dump(json: any) {
         })
           .then(save)
           .then(() => ({
-            value: profile.name,
+            value: data.profile.name,
             rank: ((discography?.topTracks.items || []) as any[])
               .map((item) => parseInt(item.track.playcount))
               .reduce((a, b) => a + b, 0),
