@@ -12,8 +12,6 @@ const COUNT_PRINT_FREQ = 10000;
 const START = Date.now();
 
 function isOneHitWonder(document) {
-  console.log(document.profile);
-  throw new Error("gotem");
   return true;
 }
 
@@ -35,6 +33,7 @@ function oneHitWonder(collection, cache) {
       collection.find().forEach((document) => {
         if (++count % COUNT_PRINT_FREQ === 0)
           console.log(count, Date.now() - START);
+        if (count > 100) throw new Error("gotem");
         if (isOneHitWonder(document)) console.log(document.profile);
       })
     );
