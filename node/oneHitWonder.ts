@@ -7,12 +7,28 @@ import { TraverseState } from "./traverse";
 const MONGO_URL = "mongodb://127.0.0.1:27017/";
 
 const COUNT_PRINT_FREQ = 10000;
+const MIN_TOP_PLAYS = 10000000;
+const MIN_RATIO = 10;
 
 const START = Date.now();
 
 function getOneHitWonder(document) {
-  console.log(document.discography.topTracks.items);
-  return undefined;
+  const tracks = document.discography.topTracks.items
+    .map((item) => ({
+      track: item.track.name,
+      playcount: parseInt(item.track.playcount),
+    }))
+    .sort((a, b) => b.playcount - a.playcount);
+  return tracks.length >= 2 &&
+    tracks[0].playcount > MIN_TOP_PLAYS &&
+    tracks[0].playcount / tracks[1].playcount > MIN_RATIO
+    ? {
+        artist: document.profile.name,
+        playcount: tracks[0].playcount,
+        track: tracks[0].track,
+        ratio: tracks[0].playcount / tracks[1].playcount,
+      }
+    : undefined;
 }
 
 function oneHitWonder(collection, cache) {
@@ -33,7 +49,6 @@ function oneHitWonder(collection, cache) {
       collection.find().forEach((document) => {
         if (++count % COUNT_PRINT_FREQ === 0)
           console.log(count, Date.now() - START);
-        if (count > 100) throw new Error("gotem");
         const data = getOneHitWonder(document);
         if (data !== undefined) console.log(data);
       })
