@@ -9,7 +9,7 @@ const MONGO_URL = "mongodb://127.0.0.1:27017/";
 
 function oneHitWonder(collection, cache) {
   var count = 0;
-  Promise.resolve()
+  return Promise.resolve()
     .then(() =>
       Object.values(TraverseState).filter((s: any) => !isNaN(parseInt(s)))
     )
