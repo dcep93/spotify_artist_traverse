@@ -32,7 +32,7 @@ export function getToken(args: { refreshToken: string; bearer: string }) {
 
 export function refreshPartnerToken() {
   tokens.partner =
-    "BQBe-zrXN_go3qzlSQBgAIanLenSjShDelJxpI-VXvtf_sS9PONfGTVxS1HUzUuZvyGSonr4POExANgdXR2k4nvWJZtGiJQVKZZpyKwyOTv2wo6Els8";
+    "BQCAgrLCYJx6cWapWCZprZ2MoJ9svgJklbzbNOngGi1rzB4lO0EXbSKA_jInw5z2H3-J4Pnmuft12F24ES5eYZCXrORUA72F9ph6YInCmX2SReRXpUwCKoVsvmNbABmW1UfWAqs8whmSYyTdGF4P2af-uW2tiCbQIulucJqwRuoyJJkFlvLQEiipUOXfixTG2I8ZIU4BEovJmeQe_YUuZpOiFCxddWowpq5KM3ZRS7g8JIS7GKOSmVHceRf58gRrqP6vApIa_IcM5t2Cvow8WqoZ9JTn5phxCsTDH4huIKcR9hgzNtHFZOubx5sEVmrgB9af3P52";
   return;
   return ext({ fetch: { url: `https://open.spotify.com`, noCache: true } })
     .then((resp: any) => resp.msg as string)
