@@ -27,9 +27,7 @@ export default function traverse(
     cache
       ? Promise.resolve(cache).then((allArtists) => ({
           artists: Object.entries(allArtists)
-            .filter(
-              ([key, val]) => (val as any).state === TraverseState.inFlight
-            )
+            .filter(([key, val]) => (val as any).state !== TraverseState.hit)
             .map(([key, val]) => key),
           allArtists,
         }))
