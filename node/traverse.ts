@@ -126,8 +126,7 @@ function receiveArtists(
               return json;
             })
             .catch((err) => {
-              if (++errs > 1000) throw err;
-              allArtists[id] = { state: TraverseState.miss };
+              allArtists[id] = { state: TraverseState.miss, value: err };
             })
             .then(
               (json) =>
