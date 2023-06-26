@@ -7,6 +7,12 @@ import { TraverseState } from "./traverse";
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/";
 
+const COUNT_PRINT_FREQ = 10000;
+
+function isOneHitWonder(document) {
+  return true;
+}
+
 function oneHitWonder(collection, cache) {
   var count = 0;
   return Promise.resolve()
@@ -23,10 +29,12 @@ function oneHitWonder(collection, cache) {
     .then(console.log)
     .then(() =>
       collection.find().forEach((document) => {
-        if (count++ % 10000 === 0) console.log(count);
+        if (count++ % COUNT_PRINT_FREQ === 0) console.log(count);
+        //
         if ((document) => cache[document.id]) return;
         if (count > 100) return;
-        console.log(document.profile);
+        //
+        if (isOneHitWonder(document)) console.log(document.profile);
       })
     )
     .then(() => console.log(count, Object.keys(cache).length));
