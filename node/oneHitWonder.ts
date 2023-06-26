@@ -13,6 +13,7 @@ const MIN_RATIO = 10;
 const START = Date.now();
 
 function getOneHitWonder(document) {
+  // TODO join remix
   const tracks = document.discography.topTracks.items
     .map((item) => ({
       track: item.track.name,
