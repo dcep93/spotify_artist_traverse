@@ -11,7 +11,8 @@ const COUNT_PRINT_FREQ = 10000;
 const START = Date.now();
 
 function getOneHitWonder(document) {
-  return document;
+  console.log(document.discography.topTracks.items);
+  return undefined;
 }
 
 function oneHitWonder(collection, cache) {
@@ -34,7 +35,7 @@ function oneHitWonder(collection, cache) {
           console.log(count, Date.now() - START);
         if (count > 100) throw new Error("gotem");
         const data = getOneHitWonder(document);
-        if (data) console.log(data);
+        if (data !== undefined) console.log(data);
       })
     );
 }
