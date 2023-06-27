@@ -23,8 +23,6 @@ export default function traverse(
   cache: any,
   writeCache: (allArtists: AllArtistsType) => void
 ) {
-  tokens.partner =
-    "BQBe-zrXN_go3qzlSQBgAIanLenSjShDelJxpI-VXvtf_sS9PONfGTVxS1HUzUuZvyGSonr4POExANgdXR2k4nvWJZtGiJQVKZZpyKwyOTv2wo6Els8";
   return (
     cache
       ? Promise.resolve(cache).then((allArtists) => ({
