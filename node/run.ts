@@ -25,7 +25,9 @@ new Promise((resolve, reject) =>
     Promise.resolve()
       .then(() => MongoClient.connect(MONGO_URL))
       .then((db) => {
-        dumpVars.collection = db.db("db").collection("collection");
+        dumpVars.collection = db
+          .db("spotify_artist_traverse")
+          .collection("collection");
         return Promise.resolve(secrets)
           .then(getToken)
           .then(

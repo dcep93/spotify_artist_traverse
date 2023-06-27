@@ -80,7 +80,7 @@ new Promise(
     .then(() => MongoClient.connect(MONGO_URL))
     .then((db) =>
       Promise.resolve()
-        .then(() => db.db("db").collection("collection"))
+        .then(() => db.db("spotify_artist_traverse").collection("collection"))
         .then((collection) => oneHitWonder(collection, cache))
         .finally(() => {
           console.log("closing");
