@@ -143,6 +143,7 @@ function receiveArtists(
                   .then(() =>
                     Promise.resolve()
                       .then(() =>
+                        // TODO include collborators
                         (
                           json.data?.artistUnion.relatedContent.relatedArtists
                             .items || []

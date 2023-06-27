@@ -49,6 +49,7 @@ function oneHitWonder(collection) {
         .sort((a, b) => a.rank - b.rank)
         .forEach((obj) => console.log(obj.value));
       console.log({
+        seen,
         length: Object.keys(found).length,
         time: Date.now() - START,
       });
