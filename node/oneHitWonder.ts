@@ -1,8 +1,5 @@
 // @ts-ignore
-// @ts-ignore
 import { MongoClient } from "mongodb";
-
-import { TraverseState } from "./traverse";
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/";
 
@@ -35,21 +32,10 @@ function getOneHitWonder(document) {
     : undefined;
 }
 
-function oneHitWonder(collection, cache) {
+function oneHitWonder(collection) {
   var seen = 0;
   const found = [];
   return Promise.resolve()
-    .then(() =>
-      Object.values(TraverseState).filter((s: any) => !isNaN(parseInt(s)))
-    )
-    .then((states) =>
-      states.map((state) => [
-        TraverseState[state],
-        Object.values(cache).filter((o: any) => o.state === state).length,
-      ])
-    )
-    .then(Object.fromEntries)
-    .then(console.log)
     .then(() =>
       collection.find().forEach((document) => {
         if (++seen % SEEN_PRINT_FREQ === 0)
@@ -66,25 +52,14 @@ function oneHitWonder(collection, cache) {
     });
 }
 
-new Promise(
-  (resolve) => resolve({})
-  //   fs.readFile("./cache.json", (err, raw) => {
-  //     if (err) return resolve(undefined);
-  //     Promise.resolve()
-  //       .then(() => raw.toString())
-  //       .then(JSON.parse)
-  //       .then(resolve);
-  //   })
-).then((cache) =>
-  Promise.resolve()
-    .then(() => MongoClient.connect(MONGO_URL))
-    .then((db) =>
-      Promise.resolve()
-        .then(() => db.db("spotify_artist_traverse").collection("collection"))
-        .then((collection) => oneHitWonder(collection, cache))
-        .finally(() => {
-          console.log("closing");
-          return db.close();
-        })
-    )
-);
+Promise.resolve()
+  .then(() => MongoClient.connect(MONGO_URL))
+  .then((db) =>
+    Promise.resolve()
+      .then(() => db.db("spotify_artist_traverse").collection("collection"))
+      .then((collection) => oneHitWonder(collection))
+      .finally(() => {
+        console.log("closing");
+        return db.close();
+      })
+  );
