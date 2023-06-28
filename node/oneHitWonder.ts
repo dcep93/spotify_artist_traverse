@@ -5,18 +5,17 @@ const MONGO_URL = "mongodb://127.0.0.1:27017/";
 
 const SEEN_PRINT_FREQ = 100000;
 const MIN_TOP_PLAYS = 10000000;
-const MIN_RATIO = 10;
+const MIN_RATIO = 7;
 
 const START = Date.now();
 
 function getOneHitWonder(document) {
-  // TODO join remix
-  const tracks = document.discography.topTracks.items
-    .map((item) => ({
+  const tracks = groupByTrack(
+    (document.discography.topTracks.items as any[]).map((item) => ({
       track: item.track.name,
       playcount: parseInt(item.track.playcount),
     }))
-    .sort((a, b) => b.playcount - a.playcount);
+  );
   return tracks.length >= 2 &&
     tracks[0].playcount > MIN_TOP_PLAYS &&
     tracks[0].playcount / tracks[1].playcount > MIN_RATIO
@@ -30,6 +29,41 @@ function getOneHitWonder(document) {
         },
       }
     : undefined;
+}
+
+function groupByTrack(
+  tracks: { track: string; playcount: number }[]
+): { track: string; playcount: number }[] {
+  return tracks
+    .map(({ track, playcount }) => ({
+      playcount,
+      track: track
+        .replace(
+          /[ -]*\(?(((acoustic)|rerecorded)|(single)) ((edit)|(version))\)?/gi,
+          ""
+        )
+        .replace(/[-\()]+ *((with .*)|(.* remix))\)?$/gi, ""),
+    }))
+    .reduce((arr, item) => {
+      const found = arr.find((i) => item.track == i.track);
+      if (found) {
+        found.playcount += item.playcount;
+      } else {
+        arr.push(item);
+      }
+      return arr;
+    }, [])
+    .sort((a, b) => a.track.length - b.track.length)
+    .reduce((arr, item) => {
+      const found = arr.find((i) => item.track.startsWith(i.track));
+      if (found) {
+        found.playcount += item.playcount;
+      } else {
+        arr.push(item);
+      }
+      return arr;
+    }, [])
+    .sort((a, b) => b.playcount - a.playcount);
 }
 
 function oneHitWonder(collection) {
