@@ -26,6 +26,7 @@ function getOneHitWonder(document) {
           playcount: tracks[0].playcount,
           track: tracks[0].track,
           ratio: tracks[0].playcount / tracks[1].playcount,
+          id: document.id,
         },
       }
     : undefined;
@@ -42,7 +43,7 @@ function groupByTrack(
           /[ -]*\(?(((acoustic)|rerecorded)|(single)) ((edit)|(version))\)?/gi,
           ""
         )
-        .replace(/[-\()]+ *((with .*)|(.* remix))\)?$/gi, ""),
+        .replace(/ ?[-\()]+ *((feat\. .*?)|(with .*?)|(.*? remix))\)?$/gi, ""),
     }))
     .reduce((arr, item) => {
       const found = arr.find((i) => item.track == i.track);
