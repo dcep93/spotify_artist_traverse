@@ -85,9 +85,10 @@ function oneHitWonder(collection) {
       })
     )
     .then(() => {
-      found
-        .sort((a, b) => a.rank - b.rank)
-        .forEach((obj) => console.log(obj.value));
+      console.log(
+        found.sort((a, b) => a.rank - b.rank),
+        { maxArrayLength: null }
+      );
       console.log({
         seen,
         length: Object.keys(found).length,
