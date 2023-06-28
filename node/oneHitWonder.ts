@@ -77,7 +77,7 @@ function oneHitWonder(collection) {
   const found = [];
   return Promise.resolve()
     .then(() =>
-      collection.find({ _id: ohw }).forEach((document) => {
+      collection.find({ _id: { $in: ohw } }).forEach((document) => {
         if (++seen % SEEN_PRINT_FREQ === 0)
           console.log({ seen, time: Date.now() - START });
         const data = getOneHitWonder(document);
