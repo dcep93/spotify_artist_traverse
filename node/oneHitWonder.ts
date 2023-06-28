@@ -21,7 +21,8 @@ function getOneHitWonder(document) {
     tracks[0].playcount > MIN_TOP_PLAYS &&
     tracks[0].playcount / tracks[1].playcount > MIN_RATIO
     ? {
-        rank: tracks[0].playcount,
+        // rank: tracks[0].playcount,
+        rank: tracks[0].track,
         value: {
           artist: document.profile.name,
           playcount: tracks[0].playcount,
@@ -86,7 +87,9 @@ function oneHitWonder(collection) {
     )
     .then(() => {
       console.dir(
-        found.sort((a, b) => a.rank - b.rank).map((item) => item.value),
+        found
+          .sort((a, b) => (a.rank > b.rank ? 1 : -1))
+          .map((item) => item.value),
         { maxArrayLength: null }
       );
       console.log({
