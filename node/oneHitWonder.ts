@@ -14,6 +14,7 @@ function getOneHitWonder(document) {
     (document.discography.topTracks.items as any[]).map((item) => ({
       track: item.track.name,
       playcount: parseInt(item.track.playcount),
+      id: item.track.id,
     }))
   );
   return tracks.length >= 2 &&
@@ -26,18 +27,19 @@ function getOneHitWonder(document) {
           playcount: tracks[0].playcount,
           track: tracks[0].track,
           ratio: tracks[0].playcount / tracks[1].playcount,
-          id: document.id,
+          artist_id: document.id,
+          track_id: tracks[0].id,
         },
       }
     : undefined;
 }
 
 function groupByTrack(
-  tracks: { track: string; playcount: number }[]
-): { track: string; playcount: number }[] {
+  tracks: { track: string; playcount: number; id: string }[]
+): { track: string; playcount: number; id: string }[] {
   return tracks
-    .map(({ track, playcount }) => ({
-      playcount,
+    .map(({ track, ...item }) => ({
+      ...item,
       track: track
         .replace(
           /[ -]*\(?(((acoustic)|rerecorded)|(single)) ((edit)|(version))\)?/gi,
@@ -58,6 +60,9 @@ function groupByTrack(
     .reduce((arr, item) => {
       const found = arr.find((i) => item.track.startsWith(i.track));
       if (found) {
+        if (item.playcount > found.playcount) {
+          found.id = item.id;
+        }
         found.playcount += item.playcount;
       } else {
         arr.push(item);
