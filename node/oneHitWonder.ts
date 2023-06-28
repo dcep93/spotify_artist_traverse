@@ -86,9 +86,7 @@ function oneHitWonder(collection) {
     )
     .then(() => {
       console.dir(
-        found
-          .sort((a, b) => a.rank - b.rank)
-          .map((item) => item.value.artist_id),
+        found.sort((a, b) => a.rank - b.rank).map((item) => item.value),
         { maxArrayLength: null }
       );
       console.log({
