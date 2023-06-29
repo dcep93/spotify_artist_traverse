@@ -5,7 +5,7 @@ const MONGO_URL = "mongodb://127.0.0.1:27017/";
 
 const SEEN_PRINT_FREQ = 100_000;
 const MIN_TOP_PLAYS = 10_000_000;
-const MIN_RATIO = 7;
+const MIN_RATIO = 100;
 
 const START = Date.now();
 
