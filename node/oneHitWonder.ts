@@ -3,8 +3,8 @@ import { MongoClient } from "mongodb";
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/";
 
-const SEEN_PRINT_FREQ = 100000;
-const MIN_TOP_PLAYS = 10000000;
+const SEEN_PRINT_FREQ = 100_000;
+const MIN_TOP_PLAYS = 10_000_000;
 const MIN_RATIO = 7;
 
 const START = Date.now();
@@ -21,12 +21,13 @@ function getOneHitWonder(document) {
     tracks[0].playcount > MIN_TOP_PLAYS &&
     tracks[0].playcount / tracks[1].playcount > MIN_RATIO
     ? {
-        // rank: tracks[0].playcount,
-        rank: tracks[0].track,
+        rank: tracks[0].playcount,
+        // rank: tracks[0].track,
         value: {
           artist: document.profile.name,
           playcount: tracks[0].playcount,
           track: tracks[0].track,
+          track2: tracks[1].track,
           ratio: tracks[0].playcount / tracks[1].playcount,
           artist_id: document.id,
           track_id: tracks[0].id,
@@ -78,12 +79,16 @@ function oneHitWonder(collection) {
   const found = [];
   return Promise.resolve()
     .then(() =>
-      collection.find({ _id: { $in: ohw } }).forEach((document) => {
-        if (++seen % SEEN_PRINT_FREQ === 0)
-          console.log({ seen, time: Date.now() - START });
-        const data = getOneHitWonder(document);
-        if (data !== undefined) found.push(data);
-      })
+      collection
+        .find(
+          { _id: { $in: ohw } } //
+        )
+        .forEach((document) => {
+          if (++seen % SEEN_PRINT_FREQ === 0)
+            console.log({ seen, time: Date.now() - START });
+          const data = getOneHitWonder(document);
+          if (data !== undefined) found.push(data);
+        })
     )
     .then(() => {
       console.dir(
