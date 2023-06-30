@@ -120,9 +120,7 @@ function makePlaylist(found: any[]) {
       },
       method: "POST",
       body: JSON.stringify({
-        uris: these_track_ids
-          .map((track_id) => `spotify:track:${track_id}`)
-          .join(","),
+        uris: these_track_ids.map((track_id) => `spotify:track:${track_id}`),
       }),
     })
       .then((resp) =>
@@ -165,6 +163,10 @@ function makePlaylist(found: any[]) {
             : resp.json()
         )
         .then((json) => json.id)
+        .then((id) => {
+          console.log(id);
+          return id;
+        })
         .then((id) => helper(track_ids, id))
     );
 }
