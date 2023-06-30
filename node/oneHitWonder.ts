@@ -1,5 +1,9 @@
 // @ts-ignore
+import * as fs from "fs";
+// @ts-ignore
 import { MongoClient } from "mongodb";
+
+import { getToken, tokens } from "./getToken";
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/";
 
@@ -9,7 +13,7 @@ const MIN_RATIO = 7;
 
 const START = Date.now();
 
-function getOneHitWonder(document) {
+function getOneHitWonder(document): { rank: any; value: any } | undefined {
   const tracks = groupByTrack(
     (document.discography.topTracks.items as any[]).map((item) => ({
       track: item.track.name,
@@ -21,8 +25,8 @@ function getOneHitWonder(document) {
     tracks[0].playcount > MIN_TOP_PLAYS &&
     tracks[0].playcount / tracks[1].playcount > MIN_RATIO
     ? {
-        rank: tracks[0].playcount,
-        // rank: tracks[0].track,
+        // rank: tracks[0].playcount,
+        rank: tracks[0].track,
         value: {
           artist: document.profile.name,
           playcount: tracks[0].playcount.toLocaleString("en-US"),
@@ -76,7 +80,7 @@ function groupByTrack(
 
 function oneHitWonder(collection) {
   var seen = 0;
-  const found = [];
+  const _found = [];
   return Promise.resolve()
     .then(() =>
       collection
@@ -87,22 +91,82 @@ function oneHitWonder(collection) {
           if (++seen % SEEN_PRINT_FREQ === 0)
             console.log({ seen, time: Date.now() - START });
           const data = getOneHitWonder(document);
-          if (data !== undefined) found.push(data);
+          if (data !== undefined) _found.push(data);
         })
     )
-    .then(() => {
-      console.dir(
-        found
-          .sort((a, b) => (a.rank > b.rank ? 1 : -1))
-          .map((item) => item.value),
-        { maxArrayLength: null }
-      );
-      console.log({
-        seen,
-        length: Object.keys(found).length,
-        time: Date.now() - START,
-      });
+    .then(() =>
+      _found
+        .sort((a, b) => (a.rank > b.rank ? 1 : -1))
+        .map((item) => item.value)
+    )
+    .then((found) => {
+      // console.dir(found, { maxArrayLength: null });
+      // console.log({
+      //   seen,
+      //   length: Object.keys(found).length,
+      //   time: Date.now() - START,
+      // });
+      return found;
     });
+}
+
+function makePlaylist(found: any[]) {
+  function helper(track_ids: string[], playlist_id: string) {
+    track_ids = track_ids.slice();
+    const these_track_ids = track_ids.splice(0, 49);
+    return fetch(`https://api.spotify.com/v1/playlists/${playlist_id}/tracks`, {
+      headers: {
+        Authorization: `Bearer ${tokens.access}`,
+      },
+      method: "POST",
+      body: JSON.stringify({
+        uris: these_track_ids
+          .map((track_id) => `spotify:track:${track_id}`)
+          .join(","),
+      }),
+    })
+      .then((resp) =>
+        !resp.ok
+          ? resp.text().then((text) => {
+              throw new Error(text);
+            })
+          : resp.json()
+      )
+      .then(console.log)
+      .then(() => track_ids.length > 0 && helper(track_ids, playlist_id));
+  }
+  return Promise.resolve()
+    .then(() => found.reverse().map((item) => item.track_id))
+    .then((track_ids) =>
+      new Promise((resolve, reject) =>
+        fs.readFile("./secrets.json", (err, raw) => {
+          if (err) return reject(err);
+          Promise.resolve()
+            .then(() => raw.toString())
+            .then(JSON.parse)
+            .then(resolve);
+        })
+      )
+        .then(getToken)
+        .then(() =>
+          fetch(`https://api.spotify.com/v1/users/${1219121897}/playlists`, {
+            headers: {
+              Authorization: `Bearer ${tokens.access}`,
+            },
+            method: "POST",
+            body: JSON.stringify({ name: "ohw", public: false }),
+          })
+        )
+        .then((resp) =>
+          !resp.ok
+            ? resp.text().then((text) => {
+                throw new Error(text);
+              })
+            : resp.json()
+        )
+        .then((json) => json.id)
+        .then((id) => helper(track_ids, id))
+    );
 }
 
 Promise.resolve()
@@ -111,6 +175,7 @@ Promise.resolve()
     Promise.resolve()
       .then(() => db.db("spotify_artist_traverse").collection("collection"))
       .then((collection) => oneHitWonder(collection))
+      .then(makePlaylist)
       .finally(() => {
         console.log("closing");
         return db.close();
