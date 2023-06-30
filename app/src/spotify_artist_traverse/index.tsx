@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import GetToken from "./GetToken";
-import traverse, { AllArtistsType, StateType, TraverseState } from "./traverse";
+import { AllArtistsType, StateType, TraverseState } from "./traverse";
 
 const memo = {} as { [k: string]: any };
 
@@ -10,11 +10,11 @@ export default function Main() {
   useEffect(() => {
     if (memo.main === token) return;
     memo.main = token;
-    token &&
-      traverse(update).catch((err) => {
-        console.error(err);
-        alert(err);
-      });
+    // token &&
+    //   traverse(update).catch((err) => {
+    //     console.error(err);
+    //     alert(err);
+    //   });
   }, [token]);
 
   if (token === false)

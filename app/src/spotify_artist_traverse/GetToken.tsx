@@ -32,7 +32,12 @@ export default function GetToken() {
 
   return {
     token,
-    loginUrl: `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`,
+    loginUrl: `https://accounts.spotify.com/authorize?${new URLSearchParams({
+      client_id: CLIENT_ID,
+      redirect_uri: REDIRECT_URI,
+      response_type: "code",
+      scope: "playlist-modify-public playlist-modify-private",
+    })}`,
     logout: () => {
       window.localStorage.removeItem(REFRESH_STORAGE_KEY);
       setToken(false);
