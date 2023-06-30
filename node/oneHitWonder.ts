@@ -134,7 +134,7 @@ function makePlaylist(found: any[]) {
       .then(() => track_ids.length > 0 && helper(track_ids, playlist_id));
   }
   return Promise.resolve()
-    .then(() => found.reverse().map((item) => item.track_id))
+    .then(() => Array.from(new Set(found.map((item) => item.track_id))))
     .then((track_ids) =>
       new Promise((resolve, reject) =>
         fs.readFile("./secrets.json", (err, raw) => {
@@ -152,7 +152,7 @@ function makePlaylist(found: any[]) {
               Authorization: `Bearer ${tokens.access}`,
             },
             method: "POST",
-            body: JSON.stringify({ name: "ohw", public: false }),
+            body: JSON.stringify({ name: "ohw 3.0", public: false }),
           })
         )
         .then((resp) =>
