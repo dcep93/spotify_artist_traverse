@@ -6,7 +6,8 @@ const memo = {} as { [k: string]: any };
 
 export default function Main() {
   const { token, loginUrl, logout } = GetToken();
-  const [state, update] = useState<StateType>({});
+  // eslint-disable-next-line
+  const [state, update] = useState<StateType>({}); // @typescript-eslint/no-unused-vars
   useEffect(() => {
     if (memo.main === token) return;
     memo.main = token;
